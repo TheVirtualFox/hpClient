@@ -1,4 +1,10 @@
-import {setControlPanel, setIsConnected, setRelaysState, setServerTimestamp} from "../store/useGlobalStore.js";
+import {
+    setControlPanel,
+    setCurrentPreset,
+    setIsConnected,
+    setRelaysState,
+    setServerTimestamp
+} from "../store/useGlobalStore.js";
 
 export class WsService {
     static instance;
@@ -39,9 +45,13 @@ export class WsService {
                     setControlPanel(payload.controlPanel);
                     setServerTimestamp(payload.timestamp);
                     setRelaysState(payload.relaysState);
+                    setCurrentPreset(payload.currentPreset);
                     break;
                 case "MINUTE_UPDATE":
                     setServerTimestamp(payload.timestamp);
+                    break;
+                case "RELAYS_STATE_UPDATED":
+                    setRelaysState(payload);
                     break;
             }
             //

@@ -21,6 +21,7 @@ createRoot(document.getElementById('root')).render(
                   <Route path="presets" element={<PresetsPage />} />
                   <Route path="presets/:id" element={<PresetPage />} />
                   <Route path="config" element={<ConfigPage />} />
+                  <Route path="debug" element={<ConfigPage />} />
               </Route>
           </Routes>
       </BrowserRouter>
