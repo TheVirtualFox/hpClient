@@ -5,6 +5,7 @@ import {
     setRelaysState,
     setServerTimestamp
 } from "../store/useGlobalStore.js";
+import { v4 as uuidv4 } from 'uuid';
 
 export class WsService {
     static instance;
@@ -13,6 +14,7 @@ export class WsService {
     state = 'disconnected';
     reconnectInterval = null;
     onMessageCallback = null;
+    pendingRequests = new Map();
 
     constructor() {
         if (WsService.instance) return WsService.instance;
@@ -53,7 +55,17 @@ export class WsService {
                 case "RELAYS_STATE_UPDATED":
                     setRelaysState(payload);
                     break;
+                case "CONTROL_PANEL_CHANGED":
+                    setControlPanel(payload);
+                    break;
             }
+            if (requestId && this.pendingRequests.has(requestId)) {
+                const { res, timeout } = this.pendingRequests.get(requestId);
+                clearTimeout(timeout);
+                res(message);
+                this.pendingRequests.delete(requestId);
+            }
+
             //
             if (this.onMessageCallback) {
                 this.onMessageCallback(event.data);
@@ -83,6 +95,22 @@ export class WsService {
         } else {
             console.warn("Соединение не установлено");
         }
+    }
+
+    sendPromiseMessage(message, timeoutMs = 5000) {
+        const requestId = message.requestId || uuidv4(); // 👉 генерируем, если не передан
+        message.requestId = requestId;
+
+        return new Promise((res, rej) => {
+            const timeout = setTimeout(() => {
+                this.pendingRequests.delete(requestId);
+                rej(new Error("Ответ не получен по requestId: " + requestId));
+            }, timeoutMs);
+
+            this.pendingRequests.set(requestId, { res, rej, timeout });
+
+            this.sendMessage(JSON.stringify(message));
+        });
     }
 
     setOnMessage(callback) {
