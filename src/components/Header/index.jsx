@@ -38,7 +38,7 @@ const ControlPanel = () =>  {
                     <KeyboardOutline/>
                 </button>
 
-                <Drawer open={isOpen} onClose={handleClose} position={"right"} edge className="duration-700 ease-in-out">
+                <Drawer open={isOpen} onClose={handleClose} position={"right"} edge className="duration-300 ease-in-out">
                     <DrawerHeader title="Панель управления" />
                     <DrawerItems>
 

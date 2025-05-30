@@ -6,6 +6,7 @@ import {
 } from "../../store/useGlobalStore.js";
 
 import { useState, useRef, useEffect } from "react";
+import {Card} from "flowbite-react";
 
 const AccordionPanel = ({open, title = "Подробнее", children }) => {
     // const [open, setOpen] = useState(defaultOpen);
@@ -22,6 +23,7 @@ const AccordionPanel = ({open, title = "Подробнее", children }) => {
 
     return (
         <div className=" rounded bg-white w-full transition-all">
+
             {/* Заголовок */}
             {/*<button*/}
             {/*    onClick={() => setOpen((prev) => !prev)}*/}
@@ -36,7 +38,7 @@ const AccordionPanel = ({open, title = "Подробнее", children }) => {
                 style={{ height }}
                 className="overflow-hidden transition-all duration-300 ease-in-out"
             >
-                <div ref={contentRef} className="p-4 text-gray-700">
+                <div ref={contentRef} className="p-4 text-gray-700 border">
                     {children}
                 </div>
             </div>
@@ -58,12 +60,12 @@ const RelayMonitor = ({label, icon, isOn, isManualControl, preset}) => {
         <div className="flex flex-col border">
 
             <div className="flex items-center p-4 bg-white rounded">
-                <div className={`${isOn ? 'text-green-500' : 'text-gray-300'} flex flex-shrink-0 items-center justify-center bg-gray-50 border h-16 w-16`}>
+                <div className={`${isOn ? 'text-green-500' : 'text-gray-300'} flex flex-shrink-0 items-center justify-center border h-12 w-12`}>
                     {icon}
                 </div>
                 <div className="flex-grow flex flex-col ml-4">
                     <div className="flex items-center justify-between">
-                        <span className="text-xl font-bold">{label}</span>
+                        <span className="text-md font-bold">{label}</span>
                         <button onClick={() => setIsOpen((prev) => !prev) }>
                             <MoreInfoIcon />
                         </button>
@@ -71,7 +73,7 @@ const RelayMonitor = ({label, icon, isOn, isManualControl, preset}) => {
 
                     <div className="flex items-center justify-between">
                     <span
-                        className="text-gray-500"> {isManualControl ? 'Ручное управление' : 'Автоматическое управление'}</span>
+                        className="text-sm text-gray-500"> {isManualControl ? 'Ручное управление' : 'Авто управление'}</span>
                         <span className="text-green-500 text-sm font-semibold ml-2">{isOn ? 'Вкл' : 'Выкл'}</span>
                     </div>
                 </div>
@@ -83,9 +85,10 @@ const RelayMonitor = ({label, icon, isOn, isManualControl, preset}) => {
 
 
             <AccordionPanel open={isOpen}>
+                <div className="text-sm border-b pb-1">Расписание:</div>
                 <div className={"text-gray-500"}>
                     {preset?.map(({on, off}) => (
-                        <div className={isInRange(secondsOfDay, on, off) ? "text-gray-700" : "text-gray-500" }>{secondsOfDayToString(on)} - {secondsOfDayToString(off)}</div>
+                        <div className={`text-sm ${isInRange(secondsOfDay, on, off) ? "text-gray-700" : "text-gray-500"}` }>{secondsOfDayToString(on)} - {secondsOfDayToString(off)}</div>
                     ))}
                 </div>
             </AccordionPanel>
@@ -104,8 +107,8 @@ const PumpIcon = () => (<svg
         fill="currentColor"
         version="1.1"
         id="Capa_1"
-        width="42px"
-        height="42px"
+        width="32px"
+        height="32px"
         viewBox="0 0 592.875 592.875"
         xml:space="preserve"
     >
@@ -140,10 +143,11 @@ const LightIcon = () => (
         fill="currentColor"
         version="1.1"
         id="Capa_1"
-        width="32px"
-        height="32px"
+        width="24px"
+        height="24px"
         viewBox="0 0 474.3 474.3"
         xml:space="preserve"
+        className="rotate-180"
     >
     <g>
         <g>
@@ -175,8 +179,8 @@ const AirIcon = () => (
         fill="currentColor"
         version="1.1"
         id="Capa_1"
-        width="32px"
-        height="32px"
+        width="24px"
+        height="24px"
         viewBox="0 0 455.987 455.987"
         xml:space="preserve"
     >
@@ -196,8 +200,8 @@ const FanIcon = () => (
         fill="currentColor"
         version="1.1"
         id="Capa_1"
-        width="32px"
-        height="32px"
+        width="23px"
+        height="23px"
         viewBox="0 0 482.906 482.906"
         xml:space="preserve"
     >
@@ -235,36 +239,74 @@ const RelaysMonitor = () => {
     const currentPreset = useGlobalStore(currentPresetSelector);
     const {isManualControl} = controlPanel;
     return <>
-        <div className="flex items-center justify-center text-gray-800 p-2 bg-gray-50">
-
-            <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-2 w-full max-w-6xl">
-                <RelayMonitor
-                    label={'Насос'}
-                    icon={<PumpIcon/>}
-                    isManualControl={isManualControl}
-                    isOn={relaysState?.pump}
-                    preset={currentPreset?.pump}
-                />
-                <RelayMonitor
-                    label={'Лампы'}
-                    icon={<LightIcon/>}
-                    isManualControl={isManualControl}
-                    isOn={relaysState?.light}
-                    preset={currentPreset?.light}
-                />
-                <RelayMonitor label={'Аэратор'} icon={<AirIcon/>} isManualControl={isManualControl}
-                              isOn={relaysState?.air} preset={currentPreset?.air} />
-                <RelayMonitor label={'Обдув'} icon={<FanIcon/>} isManualControl={isManualControl}
-                              isOn={relaysState?.fan} preset={currentPreset?.fan} />
-            </div>
-
-
+        <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-2 w-full max-w-6xl">
+            <RelayMonitor
+                label={'Насос'}
+                icon={<PumpIcon/>}
+                isManualControl={isManualControl}
+                isOn={relaysState?.pump}
+                preset={currentPreset?.pump}
+            />
+            <RelayMonitor
+                label={'Лампы'}
+                icon={<LightIcon/>}
+                isManualControl={isManualControl}
+                isOn={relaysState?.light}
+                preset={currentPreset?.light}
+            />
+            <RelayMonitor label={'Аэратор'} icon={<AirIcon/>} isManualControl={isManualControl}
+                          isOn={relaysState?.air} preset={currentPreset?.air} />
+            <RelayMonitor label={'Обдув'} icon={<FanIcon/>} isManualControl={isManualControl}
+                          isOn={relaysState?.fan} preset={currentPreset?.fan} />
         </div>
     </>;
 }
 
+const CurrentPresetMonitor = () => {
+    return (
+        <div
+            className="rounded-sm border relative border-gray-300 bg-white  p-3 px-4 min-w-full  border"
+        >
+            <div>
+                <p className="text-sm text-gray-500 font-semibold">Пресет</p>
+                <div className="text-2xl font-medium text-gray-900">
+
+                    {name}
+
+                    <div
+                        className="h-6 my-1 rounded-sm bg-gray-100 w-52 animate-pulse"
+                    />
+
+                        </div>
+
+                        <div className="flex gap-2 text-xs text-green-600 mb-2 items-end">
+                        <span className="text-gray-500">Дата включения пресета: </span>
+                        <span className="font-medium">
+
+                        <div
+                            className="h-3 rounded-sm bg-gray-100 w-52 animate-pulse"
+                        />
+ дней
+                        </span>
+                        </div>
+
+
+
+                        </div>
+                        </div>
+    );
+};
+
 export const MonitorPage = () => {
     return <>
-        <RelaysMonitor/>
-        MonitorPage</>;
+
+        <div className="flex flex-col items-center justify-center text-gray-800 p-2 gap-2">
+
+            <CurrentPresetMonitor />
+            <RelaysMonitor/>
+
+
+        </div>
+
+        </>;
 };
