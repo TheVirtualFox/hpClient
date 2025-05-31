@@ -1,5 +1,15 @@
 import {Controller, FormProvider, useFieldArray, useForm, useFormContext, useWatch} from "react-hook-form";
-import {Button, Drawer, DrawerHeader, DrawerItems, HelperText, Label, TextInput} from "flowbite-react";
+import {
+    Accordion, AccordionContent,
+    AccordionPanel, AccordionTitle,
+    Button, createTheme,
+    Drawer,
+    DrawerHeader,
+    DrawerItems,
+    HelperText,
+    Label,
+    TextInput
+} from "flowbite-react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import {useEffect, useRef, useState} from "react";
@@ -183,6 +193,26 @@ const RangeTimeInput = ({name, control, error}) => {
 
 export const PresetPage = () => {
     return <>
+        {/*<Accordion alwaysOpen>*/}
+        {/*    <AccordionPanel>*/}
+        {/*        <AccordionTitle>Расписание работы насоса</AccordionTitle>*/}
+        {/*        <AccordionContent>*/}
+        {/*            <div className="transition-all duration-300 ease-in-out overflow-hidden">*/}
+        {/*                Контент 1*/}
+        {/*            </div>*/}
+        {/*        </AccordionContent>*/}
+        {/*    </AccordionPanel>*/}
+        {/*    <AccordionPanel>*/}
+        {/*        <AccordionTitle>Расписание работы лампы</AccordionTitle>*/}
+        {/*        <AccordionContent>*/}
+        {/*            <div className="transition-all duration-300 ease-in-out overflow-hidden">*/}
+        {/*                Контент 2*/}
+        {/*            </div>*/}
+        {/*        </AccordionContent>*/}
+        {/*    </AccordionPanel>*/}
+        {/*</Accordion>*/}
+
+
         <PumpForm />
         <PresetForm />
         PresetPage</>;

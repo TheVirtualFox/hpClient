@@ -2,7 +2,17 @@ import React, {useEffect, useRef, useState} from "react";
 import { Formik, Form, FieldArray, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import {HMSToSecondsOfDay, secondsOfDayToHMS, secondsOfDayToString} from "../../store/useGlobalStore.js";
-import {Button, Drawer, DrawerHeader, DrawerItems, HelperText, Label, TextInput} from "flowbite-react";
+import {
+    Accordion, AccordionContent,
+    AccordionPanel, AccordionTitle,
+    Button,
+    Drawer,
+    DrawerHeader,
+    DrawerItems,
+    HelperText,
+    Label,
+    TextInput
+} from "flowbite-react";
 import {Swiper, SwiperSlide} from "swiper/react";
 
 
@@ -92,12 +102,15 @@ export const PumpForm = () => {
             }}
         >
             {({ values, setFieldValue }) => (
-                <Form className="p-4 space-y-4 bg-white rounded shadow max-w-md">
+                <Form className="space-y-4 bg-white rounded shadow max-w-md">
 
-                    <Input label={"Название"} value={values.label} onChange={(e) => {
-                        setFieldValue(`label`, e?.target?.value)
-                    }
+                    <div className="p-4">
+                        <Input label={"Название"} value={values.label} onChange={(e) => {
+                            setFieldValue(`label`, e?.target?.value)
+                        }
                         } />
+                    </div>
+
 
                     {/*<div>*/}
                     {/*    <label>Название</label>*/}
@@ -105,11 +118,31 @@ export const PumpForm = () => {
                     {/*    <ErrorMessage name="label" component="div" className="text-red-500 text-sm" />*/}
                     {/*</div>*/}
 
-                    <FieldArray name="pump">
-                        {({ push, remove }) => (
-                            <RangeTimePicker pump={values.pump} remove={remove} push={push} setFieldValue={setFieldValue}  />
-                        )}
-                    </FieldArray>
+
+
+                    <Accordion alwaysOpen>
+                        <AccordionPanel>
+                            <AccordionTitle>Расписание работы насоса</AccordionTitle>
+                            <AccordionContent>
+                                <FieldArray name="pump">
+                                    {({ push, remove }) => (
+                                        <RangeTimePicker pump={values.pump} remove={remove} push={push} setFieldValue={setFieldValue}  />
+                                    )}
+                                </FieldArray>
+
+                            </AccordionContent>
+                        </AccordionPanel>
+                        <AccordionPanel>
+                            <AccordionTitle>Расписание работы лампы</AccordionTitle>
+                            <AccordionContent>
+                                <div className="transition-all duration-300 ease-in-out overflow-hidden">
+                                    Контент 2
+                                </div>
+                            </AccordionContent>
+                        </AccordionPanel>
+                    </Accordion>
+
+
 
                     <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded">
                         Сохранить

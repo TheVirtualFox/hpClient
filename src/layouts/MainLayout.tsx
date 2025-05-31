@@ -15,7 +15,7 @@ export const MainLayout = () => {
     return (
         <div className="bg-gray-50 text-gray-800 grid grid-cols-[1fr]  grid-rows-[50px_1fr_64px] h-screen overflow-hidden">
             <Header />
-            <div>
+            <div className="border border-gray-700 overflow-x-auto">
                 <Outlet />
             </div>
             <Navigation />
