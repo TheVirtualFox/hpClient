@@ -62,7 +62,7 @@ export const secondsOfDaySelector = (state) => state.secondsOfDay;
 
 
 
-const secondsOfDayToHMS = (secondsOfDay) => {
+export const secondsOfDayToHMS = (secondsOfDay) => {
     const h = Math.floor(secondsOfDay / 3600);
     const m = Math.floor((secondsOfDay % 3600) / 60);
     const s = secondsOfDay % 60;
@@ -76,4 +76,20 @@ export const secondsOfDayToString = (secondsOfDay) => {
     const sStr = s.toString().padStart(2, '0');
     return `${hStr}:${mStr}:${sStr}`;
 }
+export const secondsOfDayToDate = (secondsOfDay) => {
+    const {h,m,s} = secondsOfDayToHMS(secondsOfDay);
+    const date = new Date();
+    date.setUTCFullYear(0,0,0);
+    date.setHours(h,m,s, 0);
+    return date;
+}
+export const dateToSecondsOfDay = (date = new Date()) => {
+    const h = date.getHours();
+    const m = date.getMinutes();
+    const s = date.getSeconds();
+    return HMSToSecondsOfDay({h,m,s});
+};
+export const HMSToSecondsOfDay = ({h,m,s}) => {
+    return h * 3600 + m * 60 + s;
+};
 export const secondsOfDayStringSelector = (state) => secondsOfDayToString(state.secondsOfDay);

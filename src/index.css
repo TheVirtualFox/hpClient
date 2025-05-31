@@ -23,3 +23,15 @@ body {
   min-height: 100vh;
 }
 
+/* Убирает кольцо фокуса для переключателей Flowbite */
+button[role="switch"]:focus,
+button[role="switch"].group:focus,
+button[role="switch"].group:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+button[role="switch"].group:focus div[data-testid="flowbite-toggleswitch-toggle"],
+button[role="switch"].group:focus-visible div[data-testid="flowbite-toggleswitch-toggle"] {
+  box-shadow: none !important;
+}

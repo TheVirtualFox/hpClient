@@ -22,7 +22,7 @@ const AccordionPanel = ({open, title = "Подробнее", children }) => {
     }, [open, children]);
 
     return (
-        <div className=" rounded bg-white w-full transition-all">
+        <div className="bg-white w-full transition-all">
 
             {/* Заголовок */}
             {/*<button*/}
@@ -38,7 +38,7 @@ const AccordionPanel = ({open, title = "Подробнее", children }) => {
                 style={{ height }}
                 className="overflow-hidden transition-all duration-300 ease-in-out"
             >
-                <div ref={contentRef} className="p-4 text-gray-700 border">
+                <div ref={contentRef} className="p-4 text-gray-700 border-t">
                     {children}
                 </div>
             </div>
@@ -53,6 +53,14 @@ const MoreInfoIcon = () => (
     </svg>
 );
 
+const MoreInfoButton = ({open, onClick}) => (
+    <button onClick={onClick}
+            className={`border text-xs p-1 px-2 rounded-sm font-semibold transition-300 ${open ? 'border-green-500 bg-green-500 text-white' : ''}`}>
+        Подробнее
+    </button>
+);
+
+
 const RelayMonitor = ({label, icon, isOn, isManualControl, preset}) => {
     const [isOpen, setIsOpen] = useState(false);
     const secondsOfDay = useGlobalStore(secondsOfDaySelector);
@@ -66,15 +74,13 @@ const RelayMonitor = ({label, icon, isOn, isManualControl, preset}) => {
                 <div className="flex-grow flex flex-col ml-4">
                     <div className="flex items-center justify-between">
                         <span className="text-md font-bold">{label}</span>
-                        <button onClick={() => setIsOpen((prev) => !prev) }>
-                            <MoreInfoIcon />
-                        </button>
+                        {!!preset?.length && <MoreInfoButton open={isOpen} onClick={() => setIsOpen((prev) => !prev) } />}
                     </div>
 
                     <div className="flex items-center justify-between">
                     <span
                         className="text-sm text-gray-500"> {isManualControl ? 'Ручное управление' : 'Авто управление'}</span>
-                        <span className="text-green-500 text-sm font-semibold ml-2">{isOn ? 'Вкл' : 'Выкл'}</span>
+                        {/*<span className="text-green-500 text-sm font-semibold ml-2">{isOn ? 'Вкл' : 'Выкл'}</span>*/}
                     </div>
                 </div>
 
