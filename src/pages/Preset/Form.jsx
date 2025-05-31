@@ -2,20 +2,9 @@ import React, {useEffect, useRef, useState} from "react";
 import { Formik, Form, FieldArray, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import {HMSToSecondsOfDay, secondsOfDayToHMS, secondsOfDayToString} from "../../store/useGlobalStore.js";
-import {Button, Drawer, DrawerHeader, DrawerItems, TextInput} from "flowbite-react";
+import {Button, Drawer, DrawerHeader, DrawerItems, HelperText, Label, TextInput} from "flowbite-react";
 import {Swiper, SwiperSlide} from "swiper/react";
 
-// Преобразование времени
-const secondsToHHMM = (sec) => {
-    const h = String(Math.floor(sec / 3600)).padStart(2, "0");
-    const m = String(Math.floor((sec % 3600) / 60)).padStart(2, "0");
-    return `${h}:${m}`;
-};
-
-const hhmmToSeconds = (hhmm) => {
-    const [h, m] = hhmm.split(":").map(Number);
-    return h * 3600 + m * 60;
-};
 
 // Поиск пересечений: возвращает массив конфликтных индексов
 const findOverlappingIndices = (intervals) => {
@@ -43,6 +32,20 @@ const findOverlappingIndices = (intervals) => {
     return Array.from(overlapping);
 };
 
+const Input = ({label, value, onChange, disabled}) => (
+    <div>
+        <div className="mb-2 block">
+            <Label htmlFor="username3" color="success">
+                {label}
+            </Label>
+        </div>
+        <TextInput id="username" placeholder="Bonnie Green" required color="success" value={value} onChange={onChange} />
+        <HelperText>
+            <span className="font-medium">Alright!</span> Username available!
+        </HelperText>
+    </div>
+);
+
 export const PumpForm = () => {
     return (
         <Formik
@@ -57,29 +60,50 @@ export const PumpForm = () => {
                 const errors = {};
                 const overlaps = findOverlappingIndices(values.pump);
 
+                // Проверка пересечений
                 if (overlaps.length > 0) {
                     errors.pump = [];
                     overlaps.forEach((index) => {
                         errors.pump[index] = {
+                            ...(errors.pump[index] || {}),
                             on: "Пересечение диапазона",
                             off: "Пересечение диапазона",
                         };
                     });
                 }
 
+                // Проверка "on < off"
+                values.pump.forEach((item, index) => {
+                    if (item.on >= item.off) {
+                        if (!errors.pump) errors.pump = [];
+                        errors.pump[index] = {
+                            ...(errors.pump[index] || {}),
+                            on: "Начало должно быть раньше конца",
+                            off: "Конец должен быть позже начала",
+                        };
+                    }
+                });
+
                 return errors;
             }}
+
             onSubmit={(values) => {
                 console.log("Отправлено:", values);
             }}
         >
             {({ values, setFieldValue }) => (
                 <Form className="p-4 space-y-4 bg-white rounded shadow max-w-md">
-                    <div>
-                        <label>Название</label>
-                        <Field name="label" className="border px-2 py-1 w-full" />
-                        <ErrorMessage name="label" component="div" className="text-red-500 text-sm" />
-                    </div>
+
+                    <Input label={"Название"} value={values.label} onChange={(e) => {
+                        setFieldValue(`label`, e?.target?.value)
+                    }
+                        } />
+
+                    {/*<div>*/}
+                    {/*    <label>Название</label>*/}
+                    {/*    <Field name="label" className="border px-2 py-1 w-full" />*/}
+                    {/*    <ErrorMessage name="label" component="div" className="text-red-500 text-sm" />*/}
+                    {/*</div>*/}
 
                     <FieldArray name="pump">
                         {({ push, remove }) => (
@@ -133,7 +157,14 @@ const RangeTimePicker = ({push, remove, pump, setFieldValue}) => {
 
             <button
                 type="button"
-                onClick={() => push({ on: 0, off: 0 })}
+                onClick={() => {
+                    if (pump.length) {
+                        const {on, off} = pump[pump.length - 1];
+                        push({ on: off + 30 * 60, off: off + 60 * 60 });
+                    } else {
+                        push({ on: 30 * 60, off: 12 * 3600 + 30 * 60 })
+                    }
+                }}
                 className="bg-blue-500 text-white px-2 py-1 rounded"
             >
                 + Добавить
