@@ -1,4 +1,4 @@
-import {Controller, useFieldArray, useForm} from "react-hook-form";
+import {Controller, FormProvider, useFieldArray, useForm, useFormContext, useWatch} from "react-hook-form";
 import {Button, Drawer, DrawerHeader, DrawerItems, HelperText, Label, TextInput} from "flowbite-react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -12,6 +12,7 @@ import {
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
+import {PumpForm} from "./Form.jsx";
 
 
 const Input = ({label, value, onChange, disabled}) => (
@@ -49,26 +50,30 @@ const schema = yup.object().shape({
     label: yup.string().required("Название обязательно").min(2, "Минимум 2 символа"),
     pump: yup.array().of(
         yup.object().shape({
-            on: yup.string().required("Обязательно").matches(/^\d{2}:\d{2}$/, "Формат HH:MM"),
-            off: yup.string().required("Обязательно").matches(/^\d{2}:\d{2}$/, "Формат HH:MM"),
+            on: yup.number().required("Обязательно"),
+            off: yup.number().required("Обязательно"),
         })
     ),
 });
 
 
 const PresetForm = () => {
+    const methods = useForm({
+        defaultValues: {
+            label: "",
+            pump: [{ on: 0, off: 0 }],
+        },
+        resolver: yupResolver(schema),
+        mode: 'onChange',
+        shouldFocusError: true
+    });
+
     const {
         control,
         watch,
         handleSubmit,
         formState: { errors },
-    } = useForm({
-        defaultValues: {
-            label: "",
-            pump: [{ on: "", off: "" }],
-        },
-        resolver: yupResolver(schema),
-    });
+    } = methods;
 
     const { fields, append, remove } = useFieldArray({
         control,
@@ -85,53 +90,49 @@ const PresetForm = () => {
         <div className="flex flex-col gap-4 max-w-sm p-4 bg-white rounded shadow">
             {JSON.stringify(errors)}
             {JSON.stringify(form)}
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <InputControl name="label" control={control} label="Название пресета" />
 
-                <div className="space-y-2">
-                    <h3 className="font-semibold text-gray-700">Расписание насоса</h3>
+            <FormProvider {...methods}>
+                <PumpValidator />
+                <form onSubmit={handleSubmit(onSubmit)}>
+                    <InputControl name="label" control={control} label="Название пресета" />
 
-                    {fields.map((field, index) => (
+                    <div className="space-y-2">
+                        <h3 className="font-semibold text-gray-700">Расписание насоса</h3>
 
-
-                        <div key={field.id} className="flex items-center gap-2">
-                            <RangeTimeInput
-                                name={`pump.${index}`}
-                                control={control}
-                                error={errors.pump?.[index]}
-                            />
-                            {/*// <InputControl*/}
-                            {/*//     name={`pump.${index}.from`}*/}
-                            {/*//     control={control}*/}
-                            {/*//     label="С"*/}
-                            {/*//     type="time"*/}
-                            {/*//     error={errors.pump?.[index]?.from?.message}*/}
-                            {/*// />*/}
-                            {/*// <InputControl*/}
-                            {/*//     name={`pump.${index}.to`}*/}
-                            {/*//     control={control}*/}
-                            {/*//     label="До"*/}
-                            {/*//     type="time"*/}
-                            {/*//     error={errors.pump?.[index]?.to?.message}*/}
-                            {/*// />*/}
-                            <Button color="failure" size="xs" onClick={() => remove(index)} type="button">
-                                ✕
-                            </Button>
+                        {fields.map((field, index) => (
 
 
-                        </div>
-                    ))}
+                            <div key={field.id} className="flex items-center gap-2">
+                                 <TimeInputControl
+                                     index={index}
+                                     name={`pump.${index}.on`}
+                                     control={control}
+                                 />
+                                 <TimeInputControl
+                                     index={index}
+                                     name={`pump.${index}.off`}
+                                     control={control}
+                                 />
+                                <Button color="failure" size="xs" onClick={() => remove(index)} type="button">
+                                    ✕
+                                </Button>
 
-                    <Button type="button" size="sm" onClick={() => append({ on: "", off: "" })}>
-                        + Добавить интервал
-                    </Button>
-                </div>
+
+                            </div>
+                        ))}
+
+                        <Button type="button" size="sm" onClick={() => append({ on: 0, off: 0 })}>
+                            + Добавить интервал
+                        </Button>
+                    </div>
 
 
 
-            </form>
+                </form>
 
 
+
+            </FormProvider>
 
 
 
@@ -141,18 +142,26 @@ const PresetForm = () => {
 };
 // value: 777
 
-const TimeInputControl = ({ name, control,error, disabled = false }) => {
+const TimeInputControl = ({ index, name, control, disabled = false }) => {
+    const value = useWatch({ control, name });
     return (
         <Controller
-            name={name}
+            key={`pump-${index}-on`}
+            name={`pump.${index}.on`}
+
+
+            // name={name}
             control={control}
-            render={({ field }) => (
-                <TimePicker
-                    value={field.value}
-                    onChange={field.onChange}
-                    disabled={disabled}
-                    error={error}
-                />
+            render={({ field, fieldState }) => (
+                <>
+                    {JSON.stringify(fieldState?.error?.message)}
+                    <TimePicker
+                        value={field.value}
+                        onChange={field.onChange}
+                        disabled={disabled}
+                        error={fieldState?.error}
+                    />
+                </>
             )}
         />
     );
@@ -160,14 +169,21 @@ const TimeInputControl = ({ name, control,error, disabled = false }) => {
 
 const RangeTimeInput = ({name, control, error}) => {
     return (<>
-        <TimeInputControl name={`${name}.on`} control={control} error={`${error}.on`} />
-        <TimeInputControl name={`${name}.off`} control={control} error={`${error}.off`} />
+        {/*{JSON.stringify(error)}*/}
+        <div className="flex flex-col">
+            <div className="flex gap-2 items-center">
+                <TimeInputControl name={`${name}.on`} control={control} error={error?.on} />
+                <TimeInputControl name={`${name}.off`} control={control} error={error?.off} />
+            </div>
+            {/*<div className={""}>{error?.on?.message}</div>*/}
+        </div>
     </>);
 };
 
 
 export const PresetPage = () => {
     return <>
+        <PumpForm />
         <PresetForm />
         PresetPage</>;
 };
@@ -181,7 +197,7 @@ const MINUTES = new Array(60)
     .map((_, index) => index.toString().padStart(2, "0"));
 const SECONDS = MINUTES;
 
-const TimePicker = ({placeholder, onChange, value = 0, label = "Время"}) => {
+const TimePicker = ({placeholder, onChange, value = 0, error, label = "Время"}) => {
     // const [h, setH] = useState(0);
     // const [m, setM] = useState(0);
     // const [s, setS] = useState(0);
@@ -274,7 +290,9 @@ const TimePicker = ({placeholder, onChange, value = 0, label = "Время"}) =>
 
     return (
 <>
-    <TextInput placeholder={placeholder} onClick={() => setIsOpen(true) } value={inputValue} />
+    <TextInput placeholder={placeholder} size={"sm"} onClick={() => setIsOpen(true)}
+               color={error ? 'failure' : '' }
+               value={inputValue} />
     <Drawer open={isOpen} onClose={onClose} position="bottom">
         <DrawerHeader title={label} titleIcon={() => null} />
         <DrawerItems>
@@ -303,7 +321,7 @@ const TimePicker = ({placeholder, onChange, value = 0, label = "Время"}) =>
                         >
                             {HOURS.map((h) => (
                                 <SwiperSlide key={h}>
-                                    <div className="flex items-center justify-center h-12 text-xl font-medium">
+                                    <div className="flex items-center justify-center h-12 text-md font-medium">
                                         {h}
                                     </div>
                                 </SwiperSlide>
@@ -325,7 +343,7 @@ const TimePicker = ({placeholder, onChange, value = 0, label = "Время"}) =>
                         >
                             {MINUTES.map((h) => (
                                 <SwiperSlide key={h}>
-                                    <div className="flex items-center justify-center h-12 text-xl font-medium">
+                                    <div className="flex items-center justify-center h-12 text-md font-medium">
                                         {h}
                                     </div>
                                 </SwiperSlide>
@@ -345,7 +363,7 @@ const TimePicker = ({placeholder, onChange, value = 0, label = "Время"}) =>
                         >
                             {SECONDS.map((h) => (
                                 <SwiperSlide key={h}>
-                                    <div className="flex items-center justify-center h-12 text-xl font-medium">
+                                    <div className="flex items-center justify-center h-12 text-md font-medium">
                                         {h}
                                     </div>
                                 </SwiperSlide>
@@ -371,3 +389,53 @@ const TimePicker = ({placeholder, onChange, value = 0, label = "Время"}) =>
 </>
     );
 };
+
+
+function PumpValidator() {
+    const { control, setError, clearErrors, trigger } = useFormContext();
+    const pump = useWatch({ control, name: "pump" });
+
+    useEffect(() => {
+        const errors = [];
+        // const pump = [...pumpControl].sort(({on: onA}, {on: onB}) => onA - onB);
+        for (let i = 0; i < pump.length; i++) {
+            const a = pump[i];
+            if (typeof a?.on !== "number" || typeof a?.off !== "number" ) continue;
+
+            const aStart = Math.min(a.on, a.off);
+            const aEnd = Math.max(a.on, a.off);
+
+            for (let j = 0; j < pump.length; j++) {
+                if (i === j) continue;
+
+                const b = pump[j];
+                if (typeof b?.on !== "number" || typeof b?.off !== "number" ) continue;
+
+                const bStart = Math.min(b.on, b.off);
+                const bEnd = Math.max(b.on, b.off);
+
+                const isOverlap = Math.max(aStart, bStart) < Math.min(aEnd, bEnd);
+                if (isOverlap) {
+                    errors.push(j);
+                    break;
+                }
+            }
+        }
+
+        pump.forEach((_, i) => {
+            clearErrors([`pump.${i}.on`, `pump.${i}.off`]);
+        });
+
+        pump.forEach((_, i) => {
+            if (errors.includes(i)) {
+                setError(`pump.${i}.on`, { type: "manual", message: "Пересечение диапазона" });
+                setError(`pump.${i}.off`, { type: "manual", message: "Пересечение диапазона" });
+            }
+        });
+
+        // trigger(["pump", `pump.0.on`, `pump.0.off`, `pump.1.on`, `pump.1.off`]);
+
+    }, [pump, setError, clearErrors, trigger]);
+
+    return null; // Компонент-валидатор ничего не рендерит
+}
