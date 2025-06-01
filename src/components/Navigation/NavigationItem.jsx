@@ -1,14 +1,14 @@
 import {useLottie} from "lottie-react";
 import {Link} from "react-router-dom";
 
-export const NavigationItem = ({label, icon, to}) => {
+export const NavigationItem = ({label, icon, to, isActive}) => {
     const {View, playSegments} = useLottie(icon);
 
     return (<Link
             to={to}
             type="button"
             onClick={() => playSegments([0, icon.animationData.op], true)}
-            className="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 group"
+            className={`inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 group ${isActive ? 'bg-gray-50' : ''}`}
         >
             <div className="h-7 w-7">
                 {View}

@@ -14,6 +14,7 @@ import {
     TextInput
 } from "flowbite-react";
 import {Swiper, SwiperSlide} from "swiper/react";
+import {DeleteButton} from "./DeleteButton.jsx";
 
 
 // Поиск пересечений: возвращает массив конфликтных индексов
@@ -62,6 +63,7 @@ export const PumpForm = () => {
             initialValues={{
                 label: "",
                 pump: [{ on: 0, off: 3600 }],
+                light: [{ on: 0, off: 3600 }],
             }}
             validationSchema={Yup.object({
                 label: Yup.string().required("Название обязательно"),
@@ -126,7 +128,7 @@ export const PumpForm = () => {
                             <AccordionContent>
                                 <FieldArray name="pump">
                                     {({ push, remove }) => (
-                                        <RangeTimePicker pump={values.pump} remove={remove} push={push} setFieldValue={setFieldValue}  />
+                                        <RangeTimePicker name={"pump"} values={values.pump} remove={remove} push={push} setFieldValue={setFieldValue}  />
                                     )}
                                 </FieldArray>
 
@@ -135,36 +137,72 @@ export const PumpForm = () => {
                         <AccordionPanel>
                             <AccordionTitle>Расписание работы лампы</AccordionTitle>
                             <AccordionContent>
-                                <div className="transition-all duration-300 ease-in-out overflow-hidden">
-                                    Контент 2
-                                </div>
+                                <FieldArray name="light">
+                                    {({ push, remove }) => (
+                                        <RangeTimePicker name={"light"} values={values.light} remove={remove} push={push} setFieldValue={setFieldValue}  />
+                                    )}
+                                </FieldArray>
                             </AccordionContent>
                         </AccordionPanel>
+
+                        <AccordionPanel>
+                            <AccordionTitle>Расписание работы аэратора</AccordionTitle>
+                            <AccordionContent>
+                                <FieldArray name="pump">
+
+                                </FieldArray>
+                            </AccordionContent>
+                        </AccordionPanel>
+
+                        <AccordionPanel>
+                            <AccordionTitle>Расписание работы вентиляции</AccordionTitle>
+                            <AccordionContent>
+                                <FieldArray name="pump">
+
+                                </FieldArray>
+                            </AccordionContent>
+                        </AccordionPanel>
+
                     </Accordion>
 
 
 
-                    <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded">
-                        Сохранить
-                    </button>
+
+
+
+
+                    <div className="flex">
+                        <div className="flex gap-2">
+                            <Button type="submit" className="bg-green-600 text-white px-4 py-2 rounded">
+                                Включить
+                            </Button>
+
+                            <DeleteButton />
+                        </div>
+                        <div className="flex ml-auto">
+                            <Button type="submit" className="bg-green-600 text-white px-4 py-2 rounded">
+                                Сохранить
+                            </Button>
+                        </div>
+                    </div>
                 </Form>
             )}
         </Formik>
     );
 };
 
-const RangeTimePicker = ({push, remove, pump, setFieldValue}) => {
+const RangeTimePicker = ({name, push, remove, values = [], setFieldValue}) => {
     return (<>
         <div className="space-y-3">
-            {pump.map((item, index) => (
+            {values.map((item, index) => (
                 <div key={index} className="flex items-center gap-3">
-                    <Field name={`pump.${index}.on`}>
+                    <Field name={`${name}.${index}.on`}>
                         {({ field, meta }) => (
                             <>
 
                                 <TimePicker onChange={
                                     (e) =>
-                                        setFieldValue(`pump.${index}.on`, e)
+                                        setFieldValue(`${name}.${index}.on`, e)
                                 } value={field.value} error={meta.error} />
 
 
@@ -172,12 +210,12 @@ const RangeTimePicker = ({push, remove, pump, setFieldValue}) => {
                             </>
                         )}
                     </Field>
-                    <Field name={`pump.${index}.off`}>
+                    <Field name={`${name}.${index}.off`}>
                         {({ field, meta }) => (
                             <>
                                 <TimePicker onChange={
                                     (e) =>
-                                        setFieldValue(`pump.${index}.off`, e)
+                                        setFieldValue(`${name}.${index}.off`, e)
                                 } value={field.value} error={meta.error} />
                             </>
                         )}
@@ -188,20 +226,21 @@ const RangeTimePicker = ({push, remove, pump, setFieldValue}) => {
                 </div>
             ))}
 
-            <button
+            <Button
                 type="button"
                 onClick={() => {
-                    if (pump.length) {
-                        const {on, off} = pump[pump.length - 1];
+                    if (values.length) {
+                        const {on, off} = values[values.length - 1];
                         push({ on: off + 30 * 60, off: off + 60 * 60 });
                     } else {
                         push({ on: 30 * 60, off: 12 * 3600 + 30 * 60 })
                     }
                 }}
-                className="bg-blue-500 text-white px-2 py-1 rounded"
+                size="sm"
+                className="bg-blue-500 text-white rounded !ring-0"
             >
-                + Добавить
-            </button>
+                Добавить
+            </Button>
         </div>
     </>);
 };
