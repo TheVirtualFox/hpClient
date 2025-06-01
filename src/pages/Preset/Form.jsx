@@ -1,20 +1,11 @@
 import React, {useEffect, useRef, useState} from "react";
-import { Formik, Form, FieldArray, Field, ErrorMessage } from "formik";
+import {Field, FieldArray, Form, Formik} from "formik";
 import * as Yup from "yup";
 import {HMSToSecondsOfDay, secondsOfDayToHMS, secondsOfDayToString} from "../../store/useGlobalStore.js";
-import {
-    Accordion, AccordionContent,
-    AccordionPanel, AccordionTitle,
-    Button,
-    Drawer,
-    DrawerHeader,
-    DrawerItems,
-    HelperText,
-    Label,
-    TextInput
-} from "flowbite-react";
+import {Button, Drawer, DrawerHeader, DrawerItems, HelperText, Label, Textarea, TextInput} from "flowbite-react";
 import {Swiper, SwiperSlide} from "swiper/react";
 import {DeleteButton} from "./DeleteButton.jsx";
+import {AnimatedAccordion} from "../../components/AccordionPanel/index.jsx";
 
 
 // Поиск пересечений: возвращает массив конфликтных индексов
@@ -46,16 +37,32 @@ const findOverlappingIndices = (intervals) => {
 const Input = ({label, value, onChange, disabled}) => (
     <div>
         <div className="mb-2 block">
-            <Label htmlFor="username3" color="success">
+            <Label htmlFor="username3">
                 {label}
             </Label>
         </div>
-        <TextInput id="username" placeholder="Bonnie Green" required color="success" value={value} onChange={onChange} />
+        <TextInput
+            id="username" placeholder="Bonnie Green"d
+            value={value} onChange={onChange} />
         <HelperText>
             <span className="font-medium">Alright!</span> Username available!
         </HelperText>
     </div>
 );
+
+
+const TextareaComponent = () =>{
+    return (
+        <div className="max-w-md">
+            <div className="mb-2 block">
+                <Label htmlFor="comment">Описание</Label>
+            </div>
+            <Textarea
+                className="rounded-sm"
+                id="comment" placeholder="Leave a comment..." required rows={4} />
+        </div>
+    );
+}
 
 export const PumpForm = () => {
     return (
@@ -104,13 +111,15 @@ export const PumpForm = () => {
             }}
         >
             {({ values, setFieldValue }) => (
-                <Form className="space-y-4 bg-white rounded shadow max-w-md">
+                <Form className="bg-white rounded shadow max-w-md">
 
-                    <div className="p-4">
+                    <div className="p-4 flex flex-col gap-2">
                         <Input label={"Название"} value={values.label} onChange={(e) => {
                             setFieldValue(`label`, e?.target?.value)
                         }
                         } />
+
+                        <TextareaComponent />
                     </div>
 
 
@@ -121,57 +130,38 @@ export const PumpForm = () => {
                     {/*</div>*/}
 
 
+                    <div>
+                        <AnimatedAccordion label="Расписание работы насоса">
+                            <FieldArray name="pump">
+                                {({ push, remove }) => (
+                                    <RangeTimePicker name={"pump"} values={values.pump} remove={remove} push={push} setFieldValue={setFieldValue}  />
+                                )}
+                            </FieldArray>
+                        </AnimatedAccordion>
+                        <AnimatedAccordion label="Расписание работы лампы">
+                            <FieldArray name="light">
+                                {({ push, remove }) => (
+                                    <RangeTimePicker name={"light"} values={values.light} remove={remove} push={push} setFieldValue={setFieldValue}  />
+                                )}
+                            </FieldArray>
+                        </AnimatedAccordion>
+                        <AnimatedAccordion label="Расписание работы аэратора">
+                            <FieldArray name="air">
+                                {({ push, remove }) => (
+                                    <RangeTimePicker name={"air"} values={values.air} remove={remove} push={push} setFieldValue={setFieldValue}  />
+                                )}
+                            </FieldArray>
+                        </AnimatedAccordion>
+                        <AnimatedAccordion label="Расписание работы вентиляции">
+                            <FieldArray name="fan">
+                                {({ push, remove }) => (
+                                    <RangeTimePicker name={"fan"} values={values.fan} remove={remove} push={push} setFieldValue={setFieldValue}  />
+                                )}
+                            </FieldArray>
+                        </AnimatedAccordion>
+                    </div>
 
-                    <Accordion alwaysOpen>
-                        <AccordionPanel>
-                            <AccordionTitle>Расписание работы насоса</AccordionTitle>
-                            <AccordionContent>
-                                <FieldArray name="pump">
-                                    {({ push, remove }) => (
-                                        <RangeTimePicker name={"pump"} values={values.pump} remove={remove} push={push} setFieldValue={setFieldValue}  />
-                                    )}
-                                </FieldArray>
-
-                            </AccordionContent>
-                        </AccordionPanel>
-                        <AccordionPanel>
-                            <AccordionTitle>Расписание работы лампы</AccordionTitle>
-                            <AccordionContent>
-                                <FieldArray name="light">
-                                    {({ push, remove }) => (
-                                        <RangeTimePicker name={"light"} values={values.light} remove={remove} push={push} setFieldValue={setFieldValue}  />
-                                    )}
-                                </FieldArray>
-                            </AccordionContent>
-                        </AccordionPanel>
-
-                        <AccordionPanel>
-                            <AccordionTitle>Расписание работы аэратора</AccordionTitle>
-                            <AccordionContent>
-                                <FieldArray name="pump">
-
-                                </FieldArray>
-                            </AccordionContent>
-                        </AccordionPanel>
-
-                        <AccordionPanel>
-                            <AccordionTitle>Расписание работы вентиляции</AccordionTitle>
-                            <AccordionContent>
-                                <FieldArray name="pump">
-
-                                </FieldArray>
-                            </AccordionContent>
-                        </AccordionPanel>
-
-                    </Accordion>
-
-
-
-
-
-
-
-                    <div className="flex">
+                    <div className="flex p-4">
                         <div className="flex gap-2">
                             <Button type="submit" className="bg-green-600 text-white px-4 py-2 rounded">
                                 Включить

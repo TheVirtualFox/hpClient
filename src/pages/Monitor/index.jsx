@@ -7,44 +7,8 @@ import {
 
 import { useState, useRef, useEffect } from "react";
 import {Card} from "flowbite-react";
+import {AccordionPanel} from "../../components/AccordionPanel/index.jsx";
 
-const AccordionPanel = ({open, title = "Подробнее", children }) => {
-    // const [open, setOpen] = useState(defaultOpen);
-    const [height, setHeight] = useState("0px");
-    const contentRef = useRef(null);
-
-    useEffect(() => {
-        if (open && contentRef.current) {
-            setHeight(`${contentRef.current.scrollHeight}px`);
-        } else {
-            setHeight("0px");
-        }
-    }, [open, children]);
-
-    return (
-        <div className="bg-white w-full transition-all">
-
-            {/* Заголовок */}
-            {/*<button*/}
-            {/*    onClick={() => setOpen((prev) => !prev)}*/}
-            {/*    className="w-full flex items-center justify-between p-4 text-left text-lg font-medium hover:bg-gray-100 transition"*/}
-            {/*    aria-expanded={open}*/}
-            {/*>*/}
-            {/*    {title}*/}
-            {/*</button>*/}
-
-            {/* Контейнер с анимацией по высоте */}
-            <div
-                style={{ height }}
-                className="overflow-hidden transition-all duration-300 ease-in-out"
-            >
-                <div ref={contentRef} className="p-4 text-gray-700 border-t">
-                    {children}
-                </div>
-            </div>
-        </div>
-    );
-}
 
 
 const MoreInfoIcon = () => (
