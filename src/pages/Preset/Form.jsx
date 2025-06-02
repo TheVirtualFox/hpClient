@@ -1,5 +1,5 @@
-import React, {useEffect, useRef, useState} from "react";
-import {Field, FieldArray, Form, Formik} from "formik";
+import React, {memo, useCallback, useEffect, useMemo, useRef, useState} from "react";
+import {Field, FieldArray, Form, Formik, useFormikContext} from "formik";
 import * as Yup from "yup";
 import {HMSToSecondsOfDay, secondsOfDayToHMS, secondsOfDayToString} from "../../store/useGlobalStore.js";
 import {Button, Drawer, DrawerHeader, DrawerItems, HelperText, Label, Textarea, TextInput} from "flowbite-react";
@@ -51,7 +51,7 @@ const Input = ({label, value, onChange, disabled}) => (
 );
 
 
-const TextareaComponent = () =>{
+const TextareaComponent = memo(() =>{
     return (
         <div className="max-w-md">
             <div className="mb-2 block">
@@ -62,154 +62,187 @@ const TextareaComponent = () =>{
                 id="comment" placeholder="Leave a comment..." required rows={4} />
         </div>
     );
-}
+})
+
+const LabelInput = memo(() => {
+    const { values, setFieldValue } = useFormikContext();
+    const onChange = useCallback((e) => {
+        setFieldValue(`label`, e?.target?.value)
+    }, [setFieldValue]);
+
+    return (
+        <Input label={"Название"} value={values.label} onChange={onChange} />
+    );
+});
 
 export const PumpForm = () => {
     return (
-        <Formik
-            initialValues={{
-                label: "",
-                pump: [{ on: 0, off: 3600 }],
-                light: [{ on: 0, off: 3600 }],
-            }}
-            validationSchema={Yup.object({
-                label: Yup.string().required("Название обязательно"),
-            })}
-            validate={(values) => {
-                const errors = {};
-                const overlaps = findOverlappingIndices(values.pump);
+        <>
+            <Formik
+                initialValues={{
+                    label: "",
+                    pump: [{ on: 0, off: 3600 }],
+                    light: [{ on: 0, off: 3600 }],
+                }}
+                validationSchema={Yup.object({
+                    label: Yup.string().required("Название обязательно"),
+                })}
+                validate={(values) => {
+                    const errors = {};
+                    const overlaps = findOverlappingIndices(values.pump);
 
-                // Проверка пересечений
-                if (overlaps.length > 0) {
-                    errors.pump = [];
-                    overlaps.forEach((index) => {
-                        errors.pump[index] = {
-                            ...(errors.pump[index] || {}),
-                            on: "Пересечение диапазона",
-                            off: "Пересечение диапазона",
-                        };
-                    });
-                }
-
-                // Проверка "on < off"
-                values.pump.forEach((item, index) => {
-                    if (item.on >= item.off) {
-                        if (!errors.pump) errors.pump = [];
-                        errors.pump[index] = {
-                            ...(errors.pump[index] || {}),
-                            on: "Начало должно быть раньше конца",
-                            off: "Конец должен быть позже начала",
-                        };
+                    // Проверка пересечений
+                    if (overlaps.length > 0) {
+                        errors.pump = [];
+                        overlaps.forEach((index) => {
+                            errors.pump[index] = {
+                                ...(errors.pump[index] || {}),
+                                on: "Пересечение диапазона",
+                                off: "Пересечение диапазона",
+                            };
+                        });
                     }
-                });
 
-                return errors;
-            }}
-
-            onSubmit={(values) => {
-                console.log("Отправлено:", values);
-            }}
-        >
-            {({ values, setFieldValue }) => (
-                <Form className="bg-white rounded shadow max-w-md">
-
-                    <div className="p-4 flex flex-col gap-2">
-                        <Input label={"Название"} value={values.label} onChange={(e) => {
-                            setFieldValue(`label`, e?.target?.value)
+                    // Проверка "on < off"
+                    values.pump.forEach((item, index) => {
+                        if (item.on >= item.off) {
+                            if (!errors.pump) errors.pump = [];
+                            errors.pump[index] = {
+                                ...(errors.pump[index] || {}),
+                                on: "Начало должно быть раньше конца",
+                                off: "Конец должен быть позже начала",
+                            };
                         }
-                        } />
+                    });
 
-                        <TextareaComponent />
-                    </div>
+                    return errors;
+                }}
 
+                onSubmit={(values) => {
+                    console.log("Отправлено:", values);
+                }}
+            >
+                {({ values, setFieldValue }) => (
+                    <Form className="bg-white rounded shadow max-w-md">
 
-                    {/*<div>*/}
-                    {/*    <label>Название</label>*/}
-                    {/*    <Field name="label" className="border px-2 py-1 w-full" />*/}
-                    {/*    <ErrorMessage name="label" component="div" className="text-red-500 text-sm" />*/}
-                    {/*</div>*/}
-
-
-                    <div>
-                        <AnimatedAccordion label="Расписание работы насоса">
-                            <FieldArray name="pump">
-                                {({ push, remove }) => (
-                                    <RangeTimePicker name={"pump"} values={values.pump} remove={remove} push={push} setFieldValue={setFieldValue}  />
-                                )}
-                            </FieldArray>
-                        </AnimatedAccordion>
-                        <AnimatedAccordion label="Расписание работы лампы">
-                            <FieldArray name="light">
-                                {({ push, remove }) => (
-                                    <RangeTimePicker name={"light"} values={values.light} remove={remove} push={push} setFieldValue={setFieldValue}  />
-                                )}
-                            </FieldArray>
-                        </AnimatedAccordion>
-                        <AnimatedAccordion label="Расписание работы аэратора">
-                            <FieldArray name="air">
-                                {({ push, remove }) => (
-                                    <RangeTimePicker name={"air"} values={values.air} remove={remove} push={push} setFieldValue={setFieldValue}  />
-                                )}
-                            </FieldArray>
-                        </AnimatedAccordion>
-                        <AnimatedAccordion label="Расписание работы вентиляции">
-                            <FieldArray name="fan">
-                                {({ push, remove }) => (
-                                    <RangeTimePicker name={"fan"} values={values.fan} remove={remove} push={push} setFieldValue={setFieldValue}  />
-                                )}
-                            </FieldArray>
-                        </AnimatedAccordion>
-                    </div>
-
-                    <div className="flex p-4">
-                        <div className="flex gap-2">
-                            <Button type="submit" className="bg-green-600 text-white px-4 py-2 rounded">
-                                Включить
-                            </Button>
-
-                            <DeleteButton />
+                        <div className="p-4 flex flex-col gap-2">
+                            <LabelInput />
+                            <TextareaComponent />
                         </div>
-                        <div className="flex ml-auto">
-                            <Button type="submit" className="bg-green-600 text-white px-4 py-2 rounded">
-                                Сохранить
-                            </Button>
+
+
+                        {/*<div>*/}
+                        {/*    <label>Название</label>*/}
+                        {/*    <Field name="label" className="border px-2 py-1 w-full" />*/}
+                        {/*    <ErrorMessage name="label" component="div" className="text-red-500 text-sm" />*/}
+                        {/*</div>*/}
+
+
+                        <div>
+                            <PumpAccordion />
+                            <PumpAccordion />
+                            <PumpAccordion />
+                            <PumpAccordion />
+                            {/*<AnimatedAccordion label="Расписание работы насоса">*/}
+                            {/*    <FieldArray name="pump">*/}
+                            {/*        {({ push, remove }) => (*/}
+                            {/*            <RangeTimePicker name={"pump"} values={values.pump} remove={remove} push={push} setFieldValue={setFieldValue}  />*/}
+                            {/*        )}*/}
+                            {/*    </FieldArray>*/}
+                            {/*</AnimatedAccordion>*/}
+                            {/*<AnimatedAccordion label="Расписание работы лампы">*/}
+                            {/*    <FieldArray name="light">*/}
+                            {/*        {({ push, remove }) => (*/}
+                            {/*            <RangeTimePicker name={"light"} values={values.light} remove={remove} push={push} setFieldValue={setFieldValue}  />*/}
+                            {/*        )}*/}
+                            {/*    </FieldArray>*/}
+                            {/*</AnimatedAccordion>*/}
+                            {/*<AnimatedAccordion label="Расписание работы аэратора">*/}
+                            {/*    <FieldArray name="air">*/}
+                            {/*        {({ push, remove }) => (*/}
+                            {/*            <RangeTimePicker name={"air"} values={values.air} remove={remove} push={push} setFieldValue={setFieldValue}  />*/}
+                            {/*        )}*/}
+                            {/*    </FieldArray>*/}
+                            {/*</AnimatedAccordion>*/}
+                            {/*<AnimatedAccordion label="Расписание работы вентиляции">*/}
+                            {/*    <FieldArray name="fan">*/}
+                            {/*        {({ push, remove }) => (*/}
+                            {/*            <RangeTimePicker name={"fan"} values={values.fan} remove={remove} push={push} setFieldValue={setFieldValue}  />*/}
+                            {/*        )}*/}
+                            {/*    </FieldArray>*/}
+                            {/*</AnimatedAccordion>*/}
                         </div>
-                    </div>
-                </Form>
-            )}
-        </Formik>
+
+
+                    </Form>
+                )}
+            </Formik>
+
+            <Buttons />
+        </>
+
+
+
     );
 };
 
-const RangeTimePicker = ({name, push, remove, values = [], setFieldValue}) => {
+
+const Buttons = memo(() => {
+  return (
+      <div className="flex p-4">
+          <div className="flex gap-2">
+              <Button type="submit" className="bg-green-600 text-white px-4 py-2 rounded">
+                  Включить
+              </Button>
+
+              <DeleteButton />
+          </div>
+          <div className="flex ml-auto">
+              <Button type="submit" className="bg-green-600 text-white px-4 py-2 rounded">
+                  Сохранить
+              </Button>
+          </div>
+      </div>
+  );
+});
+
+
+const PumpAccordion = memo(() => {
+    return (
+        <AnimatedAccordion label="Расписание работы насоса">
+            <FieldArray name="pump">
+                {({ push, remove }) => (
+                    <RangeTimePicker name={"pump"} remove={remove} push={push}  />
+                )}
+            </FieldArray>
+        </AnimatedAccordion>
+    );
+});
+
+
+const TimeFiled = memo(({name, setFieldValue}) => {
+    const onChange = useCallback( (e) => {
+        setFieldValue(name, e);
+    }, [setFieldValue]);
+    return (
+        <Field name={name}>
+            {({ field, meta }) => (
+                <TimePicker onChange={onChange} value={field.value} error={meta.error} />
+            )}
+        </Field>
+    );
+});
+
+const RangeTimePicker = memo(({name, push, remove}) => {
+    const { values: val, setFieldValue } = useFormikContext();
+    const values = val?.[name];
+
     return (<>
         <div className="space-y-3">
             {values.map((item, index) => (
                 <div key={index} className="flex items-center gap-3">
-                    <Field name={`${name}.${index}.on`}>
-                        {({ field, meta }) => (
-                            <>
-
-                                <TimePicker onChange={
-                                    (e) =>
-                                        setFieldValue(`${name}.${index}.on`, e)
-                                } value={field.value} error={meta.error} />
-
-
-
-                            </>
-                        )}
-                    </Field>
-                    <Field name={`${name}.${index}.off`}>
-                        {({ field, meta }) => (
-                            <>
-                                <TimePicker onChange={
-                                    (e) =>
-                                        setFieldValue(`${name}.${index}.off`, e)
-                                } value={field.value} error={meta.error} />
-                            </>
-                        )}
-                    </Field>
+                    <TimeFiled name={`${name}.${index}.on`} setFieldValue={setFieldValue} />
+                    <TimeFiled name={`${name}.${index}.off`} setFieldValue={setFieldValue} />
                     <button type="button" onClick={() => remove(index)} className="text-red-500">
                         ✕
                     </button>
@@ -233,7 +266,7 @@ const RangeTimePicker = ({name, push, remove, values = [], setFieldValue}) => {
             </Button>
         </div>
     </>);
-};
+});
 
 const HOURS = new Array(24)
     .fill(0)
@@ -244,10 +277,11 @@ const MINUTES = new Array(60)
     .map((_, index) => index.toString().padStart(2, "0"));
 const SECONDS = MINUTES;
 
-const TimePicker = ({placeholder, onChange, value = 0, error, label = "Время"}) => {
+const TimePicker = memo(({placeholder, onChange, value = 0, error, label = "Время"}) => {
     // const [h, setH] = useState(0);
     // const [m, setM] = useState(0);
     // const [s, setS] = useState(0);
+    console.log("TimePicker 77777777777777777777777777777777777777777777777");
     const [isOpen, setIsOpen] = useState(false);
     const [inputValue, setInputValue] = useState(secondsOfDayToString(value));
 
@@ -335,10 +369,14 @@ const TimePicker = ({placeholder, onChange, value = 0, error, label = "Врем�
         return () => clearTimeout(timer);
     }, [isOpen]);
 
+    const  onClick = useCallback(() => {
+        setIsOpen(true);
+    }, [setIsOpen]);
+
     return (
         <>
-            <TextInput placeholder={placeholder} size={"sm"} onClick={() => setIsOpen(true)}
-                       color={error ? 'failure' : '' }
+            <TI size={"sm"} onClick={onClick}
+                error={error}
                        value={inputValue} />
             <Drawer open={isOpen} onClose={onClose} position="bottom">
                 <DrawerHeader title={label} titleIcon={() => null} />
@@ -435,5 +473,13 @@ const TimePicker = ({placeholder, onChange, value = 0, error, label = "Врем�
             </Drawer>
         </>
     );
-};
+});
 
+const TI = memo(({onClick, error, inputValue}) => {
+    console.log("7777777777777777777777777");
+    return (
+        <TextInput size={"sm"} onClick={onClick}
+                   color={error ? 'failure' : '' }
+                   value={inputValue} />
+    );
+});

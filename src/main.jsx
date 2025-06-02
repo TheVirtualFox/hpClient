@@ -94,7 +94,7 @@ const theme = {
 const wsService = new WsService();
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-      <ThemeProvider theme={theme}>
+      {/*<ThemeProvider theme={theme}>*/}
           <BrowserRouter>
               <Routes>
                   <Route path="/" element={<MainLayout />}>
@@ -106,6 +106,6 @@ createRoot(document.getElementById('root')).render(
                   </Route>
               </Routes>
           </BrowserRouter>
-      </ThemeProvider>
+      {/*</ThemeProvider>*/}
   </StrictMode>,
 )

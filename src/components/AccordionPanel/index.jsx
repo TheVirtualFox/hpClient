@@ -1,4 +1,4 @@
-import {memo, useEffect, useRef, useState} from "react";
+import {memo, useCallback, useEffect, useRef, useState} from "react";
 
 export const AccordionPanel = ({open, title = "Подробнее", children }) => {
     const [height, setHeight] = useState("0px");
@@ -27,7 +27,7 @@ export const AccordionPanel = ({open, title = "Подробнее", children }) 
     );
 }
 
-const Angle = ({isRotated}) => {
+const Angle = memo(({isRotated}) => {
     return (
         // <svg className={`${isRotated ? 'rotate-180' : ''} items-center border origin-center transition-transform duration-300 w-4 h-4 text-gray-800`} aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
         //      width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -41,16 +41,19 @@ const Angle = ({isRotated}) => {
               d="m1 1 5.326 5.7a.909.909 0 0 0 1.348 0L13 1"/>
     </svg>
     );
-};
+});
 
 
 export const AnimatedAccordion = memo(({label, children}) => {
     console.log("Animated", label, children);
     const [isOpen, setIsOpen] = useState(false);
+    const onClick = useCallback(() => {
+        setIsOpen((isOpen) => !isOpen);
+    }, [setIsOpen]);
     return (
         <div>
             <div className={`bg-gray-200 ${isOpen ? 'bg-gray-300' : ''} items-center flex justify-between p-2 px-4 text-gray-700 font-semibold text-sm`}
-                 onClick={() => setIsOpen((isOpen) => !isOpen) }>
+                 onClick={onClick}>
                 {label}
 
                 <Angle isRotated={isOpen} />
