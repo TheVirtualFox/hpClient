@@ -6,6 +6,7 @@ const routeMap = [
     { path: "/presets/:id", key: "preset", back: "/presets", label: "Пресет" },
     { path: "/config", key: "config", label: "Настройки" },
     { path: "/debug", key: "debug", label: "Отладка" },
+    { path: "/config/time", key: "configTime", label: "Настройки времени", back: "/config" },
 ];
 export const useRoute = () => {
     const location = useLocation();

@@ -44,9 +44,9 @@ const Angle = memo(({isRotated}) => {
 });
 
 
-export const AnimatedAccordion = memo(({label, children}) => {
+export const AnimatedAccordion = memo(({label, children, defaultOpen = false}) => {
     console.log("Animated", label, children);
-    const [isOpen, setIsOpen] = useState(false);
+    const [isOpen, setIsOpen] = useState(defaultOpen);
     const onClick = useCallback(() => {
         setIsOpen((isOpen) => !isOpen);
     }, [setIsOpen]);

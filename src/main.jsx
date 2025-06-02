@@ -10,6 +10,7 @@ import {ConfigPage} from "./pages/Config/index.jsx";
 
 import {WsService} from './service/WsService';
 import {ThemeProvider} from "flowbite-react";
+import {ConfigTimePage} from "./pages/ConfigTime/index.jsx";
 
 const theme = {
     accordion: {
@@ -103,6 +104,7 @@ createRoot(document.getElementById('root')).render(
                       <Route path="presets/:id" element={<PresetPage />} />
                       <Route path="config" element={<ConfigPage />} />
                       <Route path="debug" element={<ConfigPage />} />
+                      <Route path="config/time" element={<ConfigTimePage />} />
                   </Route>
               </Routes>
           </BrowserRouter>

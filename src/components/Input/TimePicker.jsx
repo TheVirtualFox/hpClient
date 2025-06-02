@@ -1,5 +1,5 @@
 import React, {memo, useCallback, useEffect, useRef, useState} from "react";
-import {HMSToSecondsOfDay, secondsOfDayToHMS, secondsOfDayToString} from "../../../store/useGlobalStore.js";
+import {HMSToSecondsOfDay, secondsOfDayToHMS, secondsOfDayToString} from "../../store/useGlobalStore.js";
 import {Button, Drawer, DrawerHeader, DrawerItems, TextInput} from "flowbite-react";
 import {Swiper, SwiperSlide} from "swiper/react";
 const HOURS = new Array(24)
@@ -10,6 +10,8 @@ const MINUTES = new Array(60)
     .fill(0)
     .map((_, index) => index.toString().padStart(2, "0"));
 const SECONDS = MINUTES;
+
+
 export const TimePicker = memo(({placeholder, onChange, value = 0, error, label = "Время"}) => {
     // const [h, setH] = useState(0);
     // const [m, setM] = useState(0);
@@ -207,10 +209,3 @@ export const TimePicker = memo(({placeholder, onChange, value = 0, error, label 
         </>
     );
 });
-
-// const TI = memo(({onClick, error, inputValue}) => {
-//     console.log("7777777777777777777777777");
-//     return (
-//
-//     );
-// });

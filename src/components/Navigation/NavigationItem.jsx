@@ -13,7 +13,7 @@ export const NavigationItem = ({label, icon, to, isActive}) => {
             <div className="h-7 w-7">
                 {View}
             </div>
-            <span className="text-sm text-gray-500 dark:text-gray-400 ">
+            <span className="text-sm text-gray-700 dark:text-gray-400 ">
         {label}
       </span>
         </Link>);
