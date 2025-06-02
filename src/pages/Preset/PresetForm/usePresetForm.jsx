@@ -1,6 +1,7 @@
-import { create } from 'zustand'
-import { devtools } from 'zustand/middleware'
-import { v4 as uuidv4 } from 'uuid';
+import {create} from 'zustand'
+import {devtools} from 'zustand/middleware'
+import {v4 as uuidv4} from 'uuid';
+import {WsService} from "../../../service/WsService.js";
 
 const getInitState = () => ({
     label: '',
@@ -106,6 +107,55 @@ const findOverlappingIndices = (intervals) => {
     return Array.from(overlapping);
 };
 
+const isValid = () => {
+    const errors = !!Object.values(get().errors).filter((error) => error && ( typeof error === "string" || Object.values(error).length > 0 )).length;
+
+    return errors;
+};
+
+
+const ws = new WsService();
+const getPreset = () => {
+    const {label, pump, light,air,fan, desc} = get();
+    const cleanSchedule = (schedule) => {
+        return schedule.map(({on, off}) => ({on, off}));
+    };
+    return {
+        label,
+
+        pump: cleanSchedule(pump),
+        light:  cleanSchedule(light),
+        air:  cleanSchedule(air),
+        fan:  cleanSchedule(fan),
+        desc
+    };
+};
+
+const validate = () => {
+    const {label, pump, light,air,fan} = get();
+    onLabelChange({target: {value: label}});
+    setDeviceSchedule('pump', [...pump]);
+    setDeviceSchedule('light', [...light]);
+    setDeviceSchedule('air', [...air]);
+    setDeviceSchedule('fan', [...fan]);
+}
+
+export const onSavePreset = async () => {
+    validate();
+    const errors = isValid();
+    debugger
+    if (errors) {
+        console.log("Ошибки в форме");
+        return;
+    }
+    const preset = getPreset();
+    await ws.sendPromiseMessage({
+        action: "SAVE_PRESET_REQ",
+        payload: preset
+    });
+
+};
+
 const validateDevice = (device, schedule) => {
     const errors = {};
     const overlaps = findOverlappingIndices(schedule);
@@ -133,6 +183,8 @@ const validateDevice = (device, schedule) => {
     });
     return errors;
 }
+
+
 
 export const reset = () => {
     set(getInitState());
