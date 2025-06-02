@@ -63,9 +63,9 @@ export const addNewTimeRange = (device) => {
     const schedule = get()[device];
     if (schedule.length) {
         const {on, off} = schedule[schedule.length - 1];
-        addTimeRange(device, {on: on + 30 * 60 , off: off + 30 * 60});
+        addTimeRange(device, {on: on + 60 * 60 , off: off + 60 * 60});
     } else {
-        addTimeRange(device, {on: 30 * 60, off: 12 * 3600 + 30 * 60});
+        addTimeRange(device, {on: 12 * 3600, off: 12 * 3600 + 60 * 60});
     }
 };
 export const removeTimeRange = (device, id) => {

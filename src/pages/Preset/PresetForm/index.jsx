@@ -78,29 +78,22 @@ export const PresetForm = () => {
 
     useEffect(() => reset, []);
     return (
-        <div>
+        <div className="flex flex-col gap-2 bg-white p-2">
             <LabelInput />
             <DescInput />
-            <PumpAccordion />
-            <LightAccordion />
+            <PumpAccordion device={DEVICES.pump} label={"Расписание работы насоса"} />
+            <PumpAccordion device={DEVICES.light} label={"Расписание работы освещения"} />
+            <PumpAccordion device={DEVICES.air} label={"Расписание работы аэратора"} />
+            <PumpAccordion device={DEVICES.fan} label={"Расписание работы вентиляции"} />
         </div>
     );
 };
 
-const PumpAccordion = () => {
-    const schedules = usePresetForm((state) => state[DEVICES.pump]);
+const PumpAccordion = ({device, label}) => {
+    const schedules = usePresetForm((state) => state[device]);
     return (
-        <AnimatedAccordion label="Расписание работы насоса">
-            <ScheduleComponent device={DEVICES.pump} />
-        </AnimatedAccordion>
-    );
-};
-
-const LightAccordion = () => {
-    const schedules = usePresetForm((state) => state[DEVICES.light]);
-    return (
-        <AnimatedAccordion label="Расписание работы освещения">
-            <ScheduleComponent device={DEVICES.light} />
+        <AnimatedAccordion label={label}>
+            <ScheduleComponent device={device} />
         </AnimatedAccordion>
     );
 };
