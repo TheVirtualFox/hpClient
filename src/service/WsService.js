@@ -62,6 +62,9 @@ export class WsService {
                 case "PRESETS_LIST_CHANGED":
                     setPresetsList(payload);
                     break;
+                case "TIMESTAMP_CHANGED":
+                    setServerTimestamp(payload.timestamp);
+                    break;
             }
             if (requestId && this.pendingRequests.has(requestId)) {
                 const { res, timeout } = this.pendingRequests.get(requestId);

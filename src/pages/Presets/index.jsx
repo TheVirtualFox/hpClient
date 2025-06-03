@@ -1,20 +1,7 @@
 import {Button} from "flowbite-react";
 import {Link, useNavigate} from "react-router-dom";
 import {presetsListSelector, useGlobalStore} from "../../store/useGlobalStore.js";
-
-const PresetItem = ({preset}) => {
-    const {label, timestamp, id, isActive} = preset;
-    return (<Link to={`/presets/${id}`} className={`flex flex-col border ${isActive ? 'border-green-500' : ''} bg-white p-2 rounded-sm shadow-sm w-full gap-1`}>
-        <div className="flex gap-1 justify-between border-b">
-            <div className="text-sm text-gray-500">Название:</div>
-            <div className="text-sm font-semibold">{label}</div>
-        </div>
-        <div className="flex gap-1 justify-between border-b">
-            <div className="text-sm text-gray-500">Дата создание:</div>
-            <div className="text-sm font-semibold">{timestamp}</div>
-        </div>
-    </Link>);
-};
+import {PresetItem} from "./PresetItem.jsx";
 
 export const PresetsPage = () => {
     const navigate = useNavigate();

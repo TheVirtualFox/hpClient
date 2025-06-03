@@ -2,7 +2,7 @@ import timeIcon from "./system-regular-67-clock-hover-clock.json";
 import {Link, useNavigate} from "react-router-dom";
 import {useLottie} from "lottie-react";
 
-const debugIconOptions = {
+const timeIconOptions = {
     animationData: timeIcon,
     loop: false,
     autoplay: false,
@@ -12,7 +12,7 @@ export const ConfigPage = () => {
     return <>
 
         <div className="p-2">
-            <Config label={"Настройка времени"} icon={debugIconOptions}  desc={""} to={"/"} />
+            <Config label={"Настройка времени"} icon={timeIconOptions}  desc={""} to={"/"} />
         </div>
     </>;
 };

@@ -57,7 +57,7 @@ export const TimePicker = memo(({placeholder, onChange, value = 0, error, label 
         const m = swiperMRef.current.realIndex;
         const s = swiperSRef.current.realIndex;
         const value = HMSToSecondsOfDay({h,m,s});
-        onChange(value);
+        onChange(value, {h,m,s});
         setInputValue(secondsOfDayToString(value));
         onClose();
     }

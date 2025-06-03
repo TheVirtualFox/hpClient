@@ -1,10 +1,21 @@
 import { Button, Drawer, DrawerHeader, DrawerItems } from "flowbite-react";
 import { useState } from "react";
+import {removePreset} from "./PresetForm/usePresetForm.jsx";
+import {useNavigate} from "react-router-dom";
+import {useRoute} from "../../service/useRoute.jsx";
 
 export const DeleteButton = () => {
     const [isOpen, setIsOpen] = useState(false);
 
     const handleClose = () => setIsOpen(false);
+
+    const navigate = useNavigate();
+
+    const {back} = useRoute();
+    const onClick = async () => {
+        await removePreset();
+        navigate(back);
+    };
 
     return (
         <>
@@ -24,12 +35,12 @@ export const DeleteButton = () => {
                         >
                             Отмена
                         </a>
-                        <a
-                            href="#"
+                        <Button
+                            onClick={onClick}
                             className="inline-flex items-center rounded-lg bg-pink-700 px-4 py-2 text-center text-sm font-medium text-white hover:bg-cyan-800 focus:outline-none focus:ring-4 focus:ring-cyan-300 dark:bg-cyan-600 dark:hover:bg-cyan-700 dark:focus:ring-cyan-800"
                         >
                             Удалить
-                        </a>
+                        </Button>
                     </div>
                 </DrawerItems>
             </Drawer>

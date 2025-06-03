@@ -30,20 +30,22 @@ export const setPresetsList = (presetsList) => {
 };
 
 let secondsOfDayInterval = null;
-export const setSecondsOfDay = (secondsOfDay) => {
+const setSecondsOfDay = (secondsOfDay) => {
     set({secondsOfDay});
     if (secondsOfDayInterval) {
         clearInterval(secondsOfDayInterval);
         secondsOfDayInterval = null;
     }
     secondsOfDayInterval = setInterval(() => {
-        set({secondsOfDay: get().secondsOfDay + 1 });
+        set({secondsOfDay: get().secondsOfDay % 86400 + 1 });
     }, 1000);
 }
 
 export const setServerTimestamp = (serverTimestamp) => {
-    set({serverTimestamp});
-    setSecondsOfDay(serverTimestamp % 86400 + 1);
+    const d = new Date(serverTimestamp * 1000);
+    const timestamp = HMSToSecondsOfDay(dateToHMS(d));
+    set({serverTimestamp: timestamp });
+    setSecondsOfDay(timestamp % 86400 + 1);
 };
 
 export const setRelaysState = (relaysState) => {
@@ -89,6 +91,12 @@ export const secondsOfDayToDate = (secondsOfDay) => {
     date.setHours(h,m,s, 0);
     return date;
 }
+export const dateToHMS = (date = new Date()) => {
+    const h = date.getHours();
+    const m = date.getMinutes();
+    const s = date.getSeconds();
+    return {h,m,s};
+};
 export const dateToSecondsOfDay = (date = new Date()) => {
     const h = date.getHours();
     const m = date.getMinutes();

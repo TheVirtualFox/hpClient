@@ -66,7 +66,7 @@ export const addNewTimeRange = (device) => {
     const schedule = get()[device];
     if (schedule.length) {
         const {on, off} = schedule[schedule.length - 1];
-        addTimeRange(device, {on: on + 60 * 60 , off: off + 60 * 60});
+        addTimeRange(device, {on: (on + 60 * 60) % 86400 , off: (off + 60 * 60) % 86400 });
     } else {
         addTimeRange(device, {on: 12 * 3600, off: 12 * 3600 + 60 * 60});
     }
@@ -176,7 +176,6 @@ export const onSavePreset = async () => {
         return Promise.reject();
     }
     const preset = getPreset();
-    debugger
     await ws.sendPromiseMessage({
         action: "SAVE_PRESET_REQ",
         payload: {...preset, id: preset.id || uuidv4()}
@@ -215,4 +214,10 @@ const validateDevice = (device, schedule) => {
 
 export const reset = () => {
     set(getInitState());
+};
+export const removePreset = async (id = get().id) => {
+    return await ws.sendPromiseMessage({
+        action: "DELETE_PRESET_REQ",
+        payload: {id}
+    });
 };
