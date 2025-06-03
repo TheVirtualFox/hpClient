@@ -8,6 +8,7 @@ const getInitState = () => ({
     label: '',
     pump: [],
     light: [],
+    id: null,
     air: [],
     fan: [],
     desc: '',
@@ -124,14 +125,15 @@ export const fetchPreset = async (id) => {
         action: 'GET_PRESET_REQ',
         payload: { id }
     });
-    const {label, pump, light, air, fan, desc, isActive} = message?.payload;
+    const {label, pump, light, air, fan, desc, isActive,id: idid} = message?.payload;
     set({
         label,
         pump: pump.map(({on,off}) => ({on,off,id: uuidv4()})),
         light: light.map(({on,off}) => ({on,off,id: uuidv4()})),
         air: air.map(({on,off}) => ({on,off,id: uuidv4()})),
         fan: fan.map(({on,off}) => ({on,off,id: uuidv4()})),
-        desc, isActive
+        desc, isActive,
+        id: idid
     });
     return message;
 }
@@ -139,18 +141,18 @@ export const fetchPreset = async (id) => {
 
 
 const getPreset = () => {
-    const {label, pump, light,air,fan, desc} = get();
+    const {label, pump, light,air,fan, desc,id} = get();
     const cleanSchedule = (schedule) => {
         return schedule.map(({on, off}) => ({on, off}));
     };
     return {
         label,
-
         pump: cleanSchedule(pump),
         light:  cleanSchedule(light),
         air:  cleanSchedule(air),
         fan:  cleanSchedule(fan),
-        desc
+        id,
+        desc,
     };
 };
 
@@ -174,9 +176,10 @@ export const onSavePreset = async () => {
         return Promise.reject();
     }
     const preset = getPreset();
+    debugger
     await ws.sendPromiseMessage({
         action: "SAVE_PRESET_REQ",
-        payload: preset
+        payload: {...preset, id: preset.id || uuidv4()}
     });
 };
 

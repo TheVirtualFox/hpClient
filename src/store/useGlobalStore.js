@@ -99,3 +99,4 @@ export const HMSToSecondsOfDay = ({h,m,s}) => {
     return h * 3600 + m * 60 + s;
 };
 export const secondsOfDayStringSelector = (state) => secondsOfDayToString(state.secondsOfDay);
+export const presetsListSelector = (state) => state.presetsList;

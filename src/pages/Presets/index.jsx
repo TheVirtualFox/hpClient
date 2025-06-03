@@ -1,8 +1,9 @@
 import {Button} from "flowbite-react";
-import { v4 as uuidv4 } from 'uuid';
 import {Link, useNavigate} from "react-router-dom";
+import {presetsListSelector, useGlobalStore} from "../../store/useGlobalStore.js";
 
-const PresetItem = ({label, timestamp, id = '804c3d0f-2158-437c-8f1d-dd678d7c8727', isActive}) => {
+const PresetItem = ({preset}) => {
+    const {label, timestamp, id, isActive} = preset;
     return (<Link to={`/presets/${id}`} className={`flex flex-col border ${isActive ? 'border-green-500' : ''} bg-white p-2 rounded-sm shadow-sm w-full gap-1`}>
         <div className="flex gap-1 justify-between border-b">
             <div className="text-sm text-gray-500">Название:</div>
@@ -20,20 +21,14 @@ export const PresetsPage = () => {
     const onCreatePresetClick = () => {
         navigate(`/presets/new`);
     };
+    const presetsList = useGlobalStore(presetsListSelector);
     return <>
         <div className="p-2">
             <Button size="sm" className="bg-green-500 rounded-sm px-3 py-1 h-8" onClick={onCreatePresetClick}>Создать пресет</Button>
         </div>
 
         <div className="p-2 flex flex-col gap-2">
-            <PresetItem isActive={true} />
-            <PresetItem />
-            <PresetItem />
-            <PresetItem />
-            <PresetItem />
-            <PresetItem />
-            <PresetItem />
-            <PresetItem />
+            {presetsList.map((preset) => (<PresetItem key={preset.id} preset={preset} />))}
         </div>
     </>;
 };
