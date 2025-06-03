@@ -1,8 +1,8 @@
 import { Button, Drawer, DrawerHeader, DrawerItems } from "flowbite-react";
 import { useState } from "react";
-import {removePreset} from "./PresetForm/usePresetForm.jsx";
-import {useNavigate} from "react-router-dom";
-import {useRoute} from "../../service/useRoute.jsx";
+import {removePreset} from "./usePresetForm.jsx";
+import {useNavigate, useParams} from "react-router-dom";
+import {useRoute} from "../../../service/useRoute.jsx";
 
 export const DeleteButton = () => {
     const [isOpen, setIsOpen] = useState(false);

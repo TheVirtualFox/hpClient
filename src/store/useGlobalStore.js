@@ -108,3 +108,23 @@ export const HMSToSecondsOfDay = ({h,m,s}) => {
 };
 export const secondsOfDayStringSelector = (state) => secondsOfDayToString(state.secondsOfDay);
 export const presetsListSelector = (state) => state.presetsList;
+
+export const UTCTimestampToDateString = (utcTimestamp) => {
+    const d = new Date(utcTimestamp * 1000);
+    const formatter = new Intl.DateTimeFormat('ru-RU', {
+        // weekday: 'long',   // день недели
+        year: 'numeric',
+        month: 'long',     // название месяца
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        // timeZoneName: 'short'
+    });
+    return formatter.format(d);
+};
+export const diffDays = ( utcTimestamp, now = (new Date()).getTime()) => {
+    const diffMs = now - utcTimestamp * 1000;
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    return diffDays;
+};

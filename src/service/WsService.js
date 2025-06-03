@@ -65,6 +65,9 @@ export class WsService {
                 case "TIMESTAMP_CHANGED":
                     setServerTimestamp(payload.timestamp);
                     break;
+                case "CURRENT_PRESET_UPDATED":
+                    setCurrentPreset(payload);
+                    break;
             }
             if (requestId && this.pendingRequests.has(requestId)) {
                 const { res, timeout } = this.pendingRequests.get(requestId);

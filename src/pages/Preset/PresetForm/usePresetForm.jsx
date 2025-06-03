@@ -210,14 +210,18 @@ const validateDevice = (device, schedule) => {
     return errors;
 }
 
-
-
 export const reset = () => {
     set(getInitState());
 };
 export const removePreset = async (id = get().id) => {
     return await ws.sendPromiseMessage({
         action: "DELETE_PRESET_REQ",
+        payload: {id}
+    });
+};
+export const togglePreset =  async (id = get().id) => {
+    return await ws.sendPromiseMessage({
+        action: "SET_CURRENT_PRESET_REQ",
         payload: {id}
     });
 };

@@ -1,11 +1,12 @@
 import React, {useEffect, useState} from "react";
-import {fetchPreset, onSavePreset, reset, usePresetForm} from "./usePresetForm.jsx";
+import {fetchPreset, onSavePreset, reset, togglePreset, usePresetForm} from "./usePresetForm.jsx";
 import {ScheduleAccordion} from "./ScheduleAccordion.jsx";
 import {DescInput, LabelInput} from "./InputComponent.jsx";
 import {Button} from "flowbite-react";
-import {DeleteButton} from "../DeleteButton.jsx";
+import {DeleteButton} from "./DeleteButton.jsx";
 import {useNavigate, useParams} from "react-router-dom";
 import {useRoute} from "../../../service/useRoute.jsx";
+import {currentPresetSelector, useGlobalStore} from "../../../store/useGlobalStore.js";
 
 export const PresetForm = () => {
     const { id } = useParams();
@@ -21,6 +22,7 @@ export const PresetForm = () => {
         });
     }, [id]);
     const state = usePresetForm();
+
 
     if (isLoading) {
         return <div className="flex flex-col gap-2 bg-white p-2">
@@ -95,14 +97,16 @@ const Buttons = () => {
 
         }
     }
+
+    const { id } = useParams();
+    const isDeleteButton = id !== "new";
+    const isTogglePresetButton = id !== "new";
+
     return (
         <div className="flex p-4 px-2">
             <div className="flex gap-2">
-                <Button type="submit" className="bg-green-600 text-white px-4 py-2 rounded">
-                    Включить
-                </Button>
-
-                <DeleteButton/>
+                {isTogglePresetButton && <TogglePresetButton />}
+                {isDeleteButton && <DeleteButton/>}
             </div>
             <div className="flex ml-auto">
                 <Button onClick={onClick} type="submit" className="bg-green-600 text-white px-4 py-2 rounded">
@@ -110,6 +114,20 @@ const Buttons = () => {
                 </Button>
             </div>
         </div>
+    );
+};
+
+const TogglePresetButton = () => {
+    const { id } = useParams();
+    const currentPreset = useGlobalStore(currentPresetSelector);
+    const onClick = async () => {
+        await togglePreset();
+    };
+    const isActive = id === currentPreset?.id;
+    return (
+        <Button onClick={onClick} type="submit" className="bg-green-600 text-white px-4 py-2 rounded">
+            {isActive ? 'Выкл' : 'Включить'}
+        </Button>
     );
 };
 

@@ -1,18 +1,18 @@
 import {
     controlPanelSelector,
-    currentPresetSelector,
+    currentPresetSelector, diffDays,
     relaysStateSelector, secondsOfDaySelector, secondsOfDayToString,
-    useGlobalStore
+    useGlobalStore, UTCTimestampToDateString
 } from "../../store/useGlobalStore.js";
 
-import { useState, useRef, useEffect } from "react";
+import {useState, useRef, useEffect} from "react";
 import {Card} from "flowbite-react";
 import {AccordionPanel} from "../../components/AccordionPanel/index.jsx";
 
 
-
 const MoreInfoIcon = () => (
-    <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+    <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+         width="24" height="24" fill="none" viewBox="0 0 24 24">
         <path stroke="currentColor" strokeLinecap="round" strokeWidth="2" d="M12 6h.01M12 12h.01M12 18h.01"/>
     </svg>
 );
@@ -32,13 +32,14 @@ const RelayMonitor = ({label, icon, isOn, isManualControl, preset}) => {
         <div className="flex flex-col border">
 
             <div className="flex items-center p-4 bg-white rounded">
-                <div className={`${isOn ? 'text-green-500' : 'text-gray-300'} flex flex-shrink-0 items-center justify-center border h-12 w-12`}>
+                <div
+                    className={`${isOn ? 'text-green-500' : 'text-gray-300'} flex flex-shrink-0 items-center justify-center border h-12 w-12`}>
                     {icon}
                 </div>
                 <div className="flex-grow flex flex-col ml-4">
                     <div className="flex items-center justify-between">
                         <span className="text-md font-bold">{label}</span>
-                        {!!preset?.length && <MoreInfoButton open={isOpen} onClick={() => setIsOpen((prev) => !prev) } />}
+                        {!!preset?.length && <MoreInfoButton open={isOpen} onClick={() => setIsOpen((prev) => !prev)}/>}
                     </div>
 
                     <div className="flex items-center justify-between">
@@ -49,8 +50,6 @@ const RelayMonitor = ({label, icon, isOn, isManualControl, preset}) => {
                 </div>
 
 
-
-
             </div>
 
 
@@ -58,7 +57,8 @@ const RelayMonitor = ({label, icon, isOn, isManualControl, preset}) => {
                 <div className="text-sm border-b pb-1">Расписание:</div>
                 <div className={"text-gray-500"}>
                     {preset?.map(({on, off}) => (
-                        <div className={`text-sm ${isInRange(secondsOfDay, on, off) ? "text-gray-700" : "text-gray-500"}` }>{secondsOfDayToString(on)} - {secondsOfDayToString(off)}</div>
+                        <div
+                            className={`text-sm ${isInRange(secondsOfDay, on, off) ? "text-gray-700" : "text-gray-500"}`}>{secondsOfDayToString(on)} - {secondsOfDayToString(off)}</div>
                     ))}
                 </div>
             </AccordionPanel>
@@ -225,14 +225,18 @@ const RelaysMonitor = () => {
                 preset={currentPreset?.light}
             />
             <RelayMonitor label={'Аэратор'} icon={<AirIcon/>} isManualControl={isManualControl}
-                          isOn={relaysState?.air} preset={currentPreset?.air} />
+                          isOn={relaysState?.air} preset={currentPreset?.air}/>
             <RelayMonitor label={'Обдув'} icon={<FanIcon/>} isManualControl={isManualControl}
-                          isOn={relaysState?.fan} preset={currentPreset?.fan} />
+                          isOn={relaysState?.fan} preset={currentPreset?.fan}/>
         </div>
     </>;
 }
 
 const CurrentPresetMonitor = () => {
+    const currentPreset = useGlobalStore(currentPresetSelector);
+    if (!currentPreset) {
+        return null;
+    }
     return (
         <div
             className="rounded-sm border relative border-gray-300 bg-white  p-3 px-4 min-w-full  border"
@@ -240,30 +244,20 @@ const CurrentPresetMonitor = () => {
             <div>
                 <p className="text-sm text-gray-500 font-semibold">Пресет</p>
                 <div className="text-2xl font-medium text-gray-900">
+                    {currentPreset.label}
+                </div>
 
-                    {name}
-
-                    <div
-                        className="h-6 my-1 rounded-sm bg-gray-100 w-52 animate-pulse"
-                    />
-
-                        </div>
-
-                        <div className="flex gap-2 text-xs text-green-600 mb-2 items-end">
-                        <span className="text-gray-500">Дата включения пресета: </span>
-                        <span className="font-medium">
-
-                        <div
-                            className="h-3 rounded-sm bg-gray-100 w-52 animate-pulse"
-                        />
- дней
-                        </span>
-                        </div>
+                <div className="flex gap-2 text-xs text-green-600 mb-2 items-end">
+                    <span className="text-gray-500">Дата включения пресета: </span>
+                    <span className="font-medium">
+                        {UTCTimestampToDateString(currentPreset.timestamp)} дней
+                        {diffDays(currentPreset.timestamp)}
+                    </span>
+                </div>
 
 
-
-                        </div>
-                        </div>
+            </div>
+        </div>
     );
 };
 
@@ -272,11 +266,11 @@ export const MonitorPage = () => {
 
         <div className="flex flex-col items-center justify-center text-gray-800 p-2 gap-2">
 
-            <CurrentPresetMonitor />
+            <CurrentPresetMonitor/>
             <RelaysMonitor/>
 
 
         </div>
 
-        </>;
+    </>;
 };

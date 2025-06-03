@@ -1,9 +1,5 @@
 import 'swiper/css';
 import {PresetForm} from "./PresetForm/index.jsx";
-import {Button} from "flowbite-react";
-import {DeleteButton} from "./DeleteButton.jsx";
-import {onSavePreset} from "./PresetForm/usePresetForm.jsx";
-import {useParams} from "react-router-dom";
 
 
 // value: 777
