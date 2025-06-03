@@ -18,7 +18,7 @@ const PresetItem = ({label, timestamp, id = '804c3d0f-2158-437c-8f1d-dd678d7c872
 export const PresetsPage = () => {
     const navigate = useNavigate();
     const onCreatePresetClick = () => {
-        navigate(`/presets/${uuidv4()}`);
+        navigate(`/presets/new`);
     };
     return <>
         <div className="p-2">

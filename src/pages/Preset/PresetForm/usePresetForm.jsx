@@ -2,6 +2,7 @@ import {create} from 'zustand'
 import {devtools} from 'zustand/middleware'
 import {v4 as uuidv4} from 'uuid';
 import {WsService} from "../../../service/WsService.js";
+import {toast} from "sonner";
 
 const getInitState = () => ({
     label: '',
@@ -10,7 +11,7 @@ const getInitState = () => ({
     air: [],
     fan: [],
     desc: '',
-    errors: {}
+    errors: {},
 });
 
 
@@ -113,8 +114,30 @@ const isValid = () => {
     return errors;
 };
 
-
 const ws = new WsService();
+export const fetchPreset = async (id) => {
+    const isNew = id === 'new';
+    if (isNew) {
+        return Promise.resolve();
+    }
+    const message = await ws.sendPromiseMessage({
+        action: 'GET_PRESET_REQ',
+        payload: { id }
+    });
+    const {label, pump, light, air, fan, desc, isActive} = message?.payload;
+    set({
+        label,
+        pump: pump.map(({on,off}) => ({on,off,id: uuidv4()})),
+        light: light.map(({on,off}) => ({on,off,id: uuidv4()})),
+        air: air.map(({on,off}) => ({on,off,id: uuidv4()})),
+        fan: fan.map(({on,off}) => ({on,off,id: uuidv4()})),
+        desc, isActive
+    });
+    return message;
+}
+
+
+
 const getPreset = () => {
     const {label, pump, light,air,fan, desc} = get();
     const cleanSchedule = (schedule) => {
@@ -143,17 +166,18 @@ const validate = () => {
 export const onSavePreset = async () => {
     validate();
     const errors = isValid();
-    debugger
     if (errors) {
-        console.log("Ошибки в форме");
-        return;
+        const er = 'Неправильно заполнены данные';
+        toast.success(er, {
+            position: 'top-center'
+        });
+        return Promise.reject();
     }
     const preset = getPreset();
     await ws.sendPromiseMessage({
         action: "SAVE_PRESET_REQ",
         payload: preset
     });
-
 };
 
 const validateDevice = (device, schedule) => {

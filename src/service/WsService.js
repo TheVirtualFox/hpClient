@@ -1,7 +1,7 @@
 import {
     setControlPanel,
     setCurrentPreset,
-    setIsConnected,
+    setIsConnected, setPresetsList,
     setRelaysState,
     setServerTimestamp
 } from "../store/useGlobalStore.js";
@@ -48,6 +48,7 @@ export class WsService {
                     setServerTimestamp(payload.timestamp);
                     setRelaysState(payload.relaysState);
                     setCurrentPreset(payload.currentPreset);
+                    setPresetsList(payload.presetsList);
                     break;
                 case "MINUTE_UPDATE":
                     setServerTimestamp(payload.timestamp);
@@ -57,6 +58,9 @@ export class WsService {
                     break;
                 case "CONTROL_PANEL_CHANGED":
                     setControlPanel(payload);
+                    break;
+                case "PRESETS_LIST_CHANGED":
+                    setPresetsList(payload);
                     break;
             }
             if (requestId && this.pendingRequests.has(requestId)) {

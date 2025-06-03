@@ -6,6 +6,7 @@ const getInitState = () => ({
     controlPanel: { isManualControl: false, pump: false, light: false, air: false, fan: false},
     relaysState: { pump: false, light: false, air: false, fan: false },
     serverTimestamp: null,
+    presetsList: [],
     currentPreset: null,
     secondsOfDay: 0,
 });
@@ -22,6 +23,11 @@ export const setIsConnected = (isConnected) => {
 export const setControlPanel = (controlPanel) => {
     set({controlPanel});
 }
+
+export const setPresetsList = (presetsList) => {
+    console.log(presetsList);
+    set({presetsList});
+};
 
 let secondsOfDayInterval = null;
 export const setSecondsOfDay = (secondsOfDay) => {

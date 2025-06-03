@@ -11,6 +11,7 @@ import {ConfigPage} from "./pages/Config/index.jsx";
 import {WsService} from './service/WsService';
 import {ThemeProvider} from "flowbite-react";
 import {ConfigTimePage} from "./pages/ConfigTime/index.jsx";
+import {Toaster} from "sonner";
 
 const theme = {
     accordion: {
@@ -109,5 +110,6 @@ createRoot(document.getElementById('root')).render(
               </Routes>
           </BrowserRouter>
       </ThemeProvider>
+      <Toaster />
   </StrictMode>,
 )
