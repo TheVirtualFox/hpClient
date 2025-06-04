@@ -8,7 +8,7 @@ export const TextareaComponent = ({value, onChange}) => {
         <div className="max-w-md">
             <LabelComponent id={id} label={"Описание"} />
             <Textarea
-                className="rounded-sm"
+                className="rounded-sm bg-white"
                 value={value}
                 onChange={onChange}
                 id={id} placeholder="Leave a comment..." rows={4} />

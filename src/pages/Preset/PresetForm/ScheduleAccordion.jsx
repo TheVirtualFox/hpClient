@@ -33,6 +33,10 @@ const ScheduleComponent = ({device}) => {
 
 const ArraySchedule = ({device}) => {
     const schedules = usePresetForm((state) => state[device]);
+
+    if (!schedules?.length) {
+        return null;
+    }
     return (
         <div className="flex flex-col gap-2">
             {/*{JSON.stringify(schedules)}*/}

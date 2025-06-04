@@ -13,13 +13,13 @@ export const AccordionPanel = ({open, title = "Подробнее", children }) 
     }, [open, children]);
 
     return (
-        <div className="bg-white w-full transition-all border">
+        <div className={``}>
             {/* Контейнер с анимацией по высоте */}
             <div
                 style={{ height }}
-                className="overflow-hidden transition-all duration-300 ease-in-out"
+                className={`${open ? '!border-green-500' : ''} border-transparent border overflow-hidden transition-all duration-300 ease-in-out`}
             >
-                <div ref={contentRef} className=" text-gray-700 border-t">
+                <div ref={contentRef} className=" text-gray-700 border-t1">
                     {children}
                 </div>
             </div>

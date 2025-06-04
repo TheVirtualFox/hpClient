@@ -1,15 +1,21 @@
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {Button} from "flowbite-react";
 import React from "react";
 import {currentPresetSelector, useGlobalStore} from "../../../store/useGlobalStore.js";
 import {togglePreset} from "./usePresetForm.jsx";
 import "./togglePresetButton.css";
+import {useRoute} from "../../../service/useRoute.jsx";
 
 export const TogglePresetButton = () => {
     const {id} = useParams();
     const currentPreset = useGlobalStore(currentPresetSelector);
+    const {back} = useRoute();
+    const navigate = useNavigate();
     const onClick = async () => {
         await togglePreset();
+        setTimeout(() => {
+            navigate(back);
+        }, 500);
     };
     const isActive = id === currentPreset?.id;
     return (
