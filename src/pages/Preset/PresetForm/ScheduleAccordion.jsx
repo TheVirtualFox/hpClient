@@ -22,8 +22,7 @@ const ScheduleComponent = ({device}) => {
             <Button
                 type="button"
                 onClick={onClick}
-                size="xs"
-                className="bg-blue-500 text-white rounded-sm !ring-0 w-fit"
+                className="rounded-sm border border-gray-200 bg-gray-50 px-4 py-2 text-center text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-cyan-700 focus:z-10 focus:outline-none !ring-0 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700"
             >
                 Добавить
             </Button>

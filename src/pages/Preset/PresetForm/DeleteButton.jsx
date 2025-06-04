@@ -27,18 +27,25 @@ export const DeleteButton = () => {
                 </Button>
 
             <Drawer open={isOpen} onClose={handleClose} position="bottom">
-                <DrawerHeader title="Внимение" />
+                <DrawerHeader title="Внимение" titleIcon={() => <>
+                    <svg className="w-5 h-5 text-pink-500 mr-1" aria-hidden="true"
+                         xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M12 13V8m0 8h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                    </svg>
+
+                </>} />
                 <DrawerItems>
                     <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">
                         Вы действительно хлтите удалить пресет?
                     </p>
                     <div className="flex gap-2">
-                        <a
-                            href="#"
+                        <Button
+                            onClick={handleClose}
                             className="ml-auto rounded-lg border border-gray-200 bg-white px-4 py-2 text-center text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-cyan-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700"
                         >
                             Отмена
-                        </a>
+                        </Button>
                         <Button
                             onClick={onClick}
                             className="inline-flex items-center rounded-lg bg-pink-700 px-4 py-2 text-center text-sm font-medium text-white hover:bg-cyan-800 focus:outline-none focus:ring-4 focus:ring-cyan-300 dark:bg-cyan-600 dark:hover:bg-cyan-700 dark:focus:ring-cyan-800"

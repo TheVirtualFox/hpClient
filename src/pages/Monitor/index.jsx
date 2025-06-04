@@ -54,8 +54,8 @@ const RelayMonitor = ({label, icon, isOn, isManualControl, preset}) => {
 
 
             <AccordionPanel open={isOpen}>
-                <div className="text-sm border-b pb-1">Расписание:</div>
-                <div className={"text-gray-500"}>
+                <div className="text-xs border-b py-2 px-4 bg-gray-500 font-semibold text-gray-200">Расписание:</div>
+                <div className={"text-gray-500 py-2 px-4 bg-gray-200"}>
                     {preset?.map(({on, off}) => (
                         <div
                             className={`text-sm ${isInRange(secondsOfDay, on, off) ? "text-gray-700" : "text-gray-500"}`}>{secondsOfDayToString(on)} - {secondsOfDayToString(off)}</div>

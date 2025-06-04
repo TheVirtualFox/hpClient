@@ -13,7 +13,7 @@ export const AccordionPanel = ({open, title = "Подробнее", children }) 
     }, [open, children]);
 
     return (
-        <div className="bg-white w-full transition-all">
+        <div className="bg-white w-full transition-all border">
             {/* Контейнер с анимацией по высоте */}
             <div
                 style={{ height }}
