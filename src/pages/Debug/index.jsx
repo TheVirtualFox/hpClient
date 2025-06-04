@@ -8,7 +8,7 @@ export const DebugPage = () => {
             <ReactJson
                 src={store}
                 theme="ocean"
-                iconStyle={"triangle"}
+                iconStyle="triangle"
                 displayDataTypes={false}
 
                 displayObjectSize={false}

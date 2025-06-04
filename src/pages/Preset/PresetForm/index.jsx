@@ -3,7 +3,7 @@ import {fetchPreset, onSavePreset, reset, togglePreset, usePresetForm} from "./u
 import {ScheduleAccordion} from "./ScheduleAccordion.jsx";
 import {DescInput, LabelInput} from "./InputComponent.jsx";
 import {Button} from "flowbite-react";
-import {DeleteButton} from "./DeleteButton.jsx";
+import {DeleteButton} from "./DeleteButton/index";
 import {useNavigate, useParams} from "react-router-dom";
 import {useRoute} from "../../../service/useRoute.jsx";
 import {currentPresetSelector, useGlobalStore} from "../../../store/useGlobalStore.js";
