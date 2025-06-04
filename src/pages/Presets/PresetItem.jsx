@@ -1,6 +1,7 @@
 import {Link, useNavigate} from "react-router-dom";
 import presetIcon from "./system-regular-24-view-1-hover-view-1.json";
 import {useLottie} from "lottie-react";
+import {UTCTimestampToDateString} from "../../store/useGlobalStore.js";
 
 const presetIconOptions = {
     animationData: presetIcon,
@@ -35,7 +36,7 @@ export const PresetItem = ({preset}) => {
 
 
 
-    <div onClick={() => playSegments([0, presetIconOptions.animationData.op], true)} className="border flex items-center p-4 bg-white rounded-sm">
+    <div onClick={() => playSegments([0, presetIconOptions.animationData.op], true)} className={`${isActive ? 'border-green-500' : ''} border flex items-center p-4 bg-white rounded-sm`}>
         <div className="p-1 text-gray-300 flex flex-shrink-0 items-center justify-center border h-12 w-12">
             {View}
         </div>
@@ -43,8 +44,10 @@ export const PresetItem = ({preset}) => {
             <div className="flex items-center justify-between"><span className="text-md font-bold">{label}</span>
                 {/*<button className="border text-xs p-1 px-2 rounded-sm font-semibold transition-300 ">Подробнее</button>*/}
             </div>
-            <div className="flex items-center justify-between"><span
-                className="text-xs text-gray-500"> Авто управление</span></div>
+            <div className="flex items-center justify-between">
+                <div
+                className="text-xs text-gray-500">{UTCTimestampToDateString(timestamp)}</div>
+            </div>
         </div>
     </div>
 

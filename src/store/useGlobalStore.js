@@ -26,7 +26,16 @@ export const setControlPanel = (controlPanel) => {
 
 export const setPresetsList = (presetsList) => {
     console.log(presetsList);
-    set({presetsList});
+    set({presetsList: presetsList?.sort((a, b) => {
+            // Сначала сортируем по isActive
+            if (a?.isActive && !b?.isActive) return -1;
+            if (!a?.isActive && b?.isActive) return 1;
+
+            // Если оба равны по isActive, сортируем по label
+            const aStr = a?.label?.toLowerCase() || '';
+            const bStr = b?.label?.toLowerCase() || '';
+            return aStr.localeCompare(bStr);
+        })   });
 };
 
 let secondsOfDayInterval = null;
@@ -108,6 +117,7 @@ export const HMSToSecondsOfDay = ({h,m,s}) => {
 };
 export const secondsOfDayStringSelector = (state) => secondsOfDayToString(state.secondsOfDay);
 export const presetsListSelector = (state) => state.presetsList;
+
 
 export const UTCTimestampToDateString = (utcTimestamp) => {
     const d = new Date(utcTimestamp * 1000);

@@ -250,7 +250,7 @@ const CurrentPresetMonitor = () => {
                 <div className="flex gap-2 text-xs text-green-600 mb-2 items-end">
                     <span className="text-gray-500">Дата включения пресета: </span>
                     <span className="font-medium">
-                        {UTCTimestampToDateString(currentPreset.timestamp)} дней
+                        {UTCTimestampToDateString(currentPreset?.activeTimestamp)} дней
                         {diffDays(currentPreset.timestamp)}
                     </span>
                 </div>

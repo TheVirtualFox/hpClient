@@ -7,6 +7,7 @@ import {DeleteButton} from "./DeleteButton.jsx";
 import {useNavigate, useParams} from "react-router-dom";
 import {useRoute} from "../../../service/useRoute.jsx";
 import {currentPresetSelector, useGlobalStore} from "../../../store/useGlobalStore.js";
+import {TogglePresetButton} from "./TogglePresetButton.jsx";
 
 export const PresetForm = () => {
     const { id } = useParams();
@@ -109,25 +110,11 @@ const Buttons = () => {
                 {isDeleteButton && <DeleteButton/>}
             </div>
             <div className="flex ml-auto">
-                <Button onClick={onClick} type="submit" className="bg-green-600 text-white px-4 py-2 rounded">
+                <Button onClick={onClick} type="submit" className="bg-green-500 text-white px-4 py-2 rounded-sm">
                     Сохранить
                 </Button>
             </div>
         </div>
-    );
-};
-
-const TogglePresetButton = () => {
-    const { id } = useParams();
-    const currentPreset = useGlobalStore(currentPresetSelector);
-    const onClick = async () => {
-        await togglePreset();
-    };
-    const isActive = id === currentPreset?.id;
-    return (
-        <Button onClick={onClick} type="submit" className="bg-green-600 text-white px-4 py-2 rounded">
-            {isActive ? 'Выкл' : 'Включить'}
-        </Button>
     );
 };
 
