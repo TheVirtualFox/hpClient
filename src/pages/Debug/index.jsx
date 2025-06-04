@@ -13,7 +13,7 @@ export const DebugPage = () => {
 
                 displayObjectSize={false}
                 quotesOnKeys={false}
-
+                enableClipboard={false}
             />
         </div>
     );
