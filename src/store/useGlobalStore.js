@@ -52,7 +52,7 @@ const setSecondsOfDay = (secondsOfDay) => {
 
 export const setServerTimestamp = (serverTimestamp) => {
     const d = new Date(serverTimestamp * 1000);
-    const timestamp = HMSToSecondsOfDay(dateToHMS(d));
+    const timestamp = HMSToSecondsOfDay(dateToHMS(new Date(d.getTime() + d.getTimezoneOffset() * 60_000)));
     set({serverTimestamp: timestamp });
     setSecondsOfDay(timestamp % 86400 + 1);
 };
