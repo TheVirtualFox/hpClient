@@ -1,8 +1,9 @@
 import {create} from 'zustand'
 import {devtools} from 'zustand/middleware'
-import {v4 as uuidv4} from 'uuid';
+import { nanoid } from 'nanoid'
 import {WsService} from "../../../service/WsService.js";
 import {toast} from "sonner";
+import {v4 as uuidv4} from 'uuid';
 
 const getInitState = () => ({
     label: '',
@@ -178,7 +179,7 @@ export const onSavePreset = async () => {
     const preset = getPreset();
     await ws.sendPromiseMessage({
         action: "SAVE_PRESET_REQ",
-        payload: {...preset, id: preset.id || uuidv4()}
+        payload: {...preset, id: preset.id || nanoid(12)}
     });
 };
 

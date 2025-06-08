@@ -77,6 +77,12 @@ export const currentPresetSelector = (state) => state.currentPreset;
 
 export const secondsOfDaySelector = (state) => state.secondsOfDay;
 
+export const activeTimestampSelector = (state) => {
+    const id = state.currentPreset?.id;
+    return state.presetsList?.find((p) => p?.id === id)?.activeTimestamp;
+};
+
+
 
 
 export const secondsOfDayToHMS = (secondsOfDay) => {

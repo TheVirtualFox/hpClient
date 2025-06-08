@@ -1,4 +1,5 @@
 import {
+    activeTimestampSelector,
     controlPanelSelector,
     currentPresetSelector, diffDays,
     relaysStateSelector, secondsOfDaySelector, secondsOfDayToString,
@@ -234,6 +235,7 @@ const RelaysMonitor = () => {
 
 const CurrentPresetMonitor = () => {
     const currentPreset = useGlobalStore(currentPresetSelector);
+    const activeTimestamp = useGlobalStore(activeTimestampSelector);
     if (!currentPreset) {
         return null;
     }
@@ -250,8 +252,8 @@ const CurrentPresetMonitor = () => {
                 <div className="flex gap-2 text-xs text-green-600 mb-2 items-end">
                     <span className="text-gray-500">Дата включения пресета: </span>
                     <span className="font-medium">
-                        {UTCTimestampToDateString(currentPreset?.activeTimestamp)} дней
-                        {diffDays(currentPreset.timestamp)}
+                        {activeTimestamp && `${UTCTimestampToDateString(activeTimestamp)} дней`}
+                        {activeTimestamp && diffDays(activeTimestamp)}
                     </span>
                 </div>
 
