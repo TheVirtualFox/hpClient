@@ -1,7 +1,7 @@
 import {Link, useNavigate} from "react-router-dom";
 import presetIcon from "./system-regular-24-view-1-hover-view-1.json";
 import {useLottie} from "lottie-react";
-import {UTCTimestampToDateString} from "../../store/useGlobalStore.js";
+import {getLocalTimestamp, UTCTimestampToDateString} from "../../store/useGlobalStore.js";
 
 const presetIconOptions = {
     animationData: presetIcon,
@@ -45,8 +45,8 @@ export const PresetItem = ({preset}) => {
                 {/*<button className="border text-xs p-1 px-2 rounded-sm font-semibold transition-300 ">Подробнее</button>*/}
             </div>
             <div className="flex items-center justify-between">
-                <div
-                className="text-xs text-gray-500">{UTCTimestampToDateString(timestamp)}</div>
+                {timestamp && (<div
+                    className="text-xs text-gray-500">{UTCTimestampToDateString(getLocalTimestamp(timestamp))}</div>)}
             </div>
         </div>
     </div>

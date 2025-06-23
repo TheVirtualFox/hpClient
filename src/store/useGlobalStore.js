@@ -79,11 +79,14 @@ export const secondsOfDaySelector = (state) => state.secondsOfDay;
 
 export const activeTimestampSelector = (state) => {
     const id = state.currentPreset?.id;
-    return state.presetsList?.find((p) => p?.id === id)?.activeTimestamp;
+    return getLocalTimestamp(state.presetsList?.find((p) => p?.id === id)?.activeTimestamp);
 };
 
 
-
+export const getLocalTimestamp = (utcTimestamp) => {
+    const newDate = new Date();
+    return utcTimestamp + (newDate.getTimezoneOffset() * 60);
+};
 
 export const secondsOfDayToHMS = (secondsOfDay) => {
     const h = Math.floor(secondsOfDay / 3600);
