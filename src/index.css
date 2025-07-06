@@ -35,3 +35,22 @@ button[role="switch"].group:focus div[data-testid="flowbite-toggleswitch-toggle"
 button[role="switch"].group:focus-visible div[data-testid="flowbite-toggleswitch-toggle"] {
   box-shadow: none !important;
 }
+
+.animation-duration-7 {
+  animation-duration: 5000ms;
+}
+
+.dots {
+  width: 11px;
+  height: 2px;
+  background: radial-gradient(circle closest-side, #282828 90%,#0000) 0 0/33% 100% space;
+  clip-path: inset(0 100% 0 0);
+  animation: dots-e3xtdg 2.0999999999999996s steps(4) infinite;
+  display: inline-block;
+}
+
+@keyframes dots-e3xtdg {
+  to {
+    clip-path: inset(0 -34% 0 0);
+  }
+}

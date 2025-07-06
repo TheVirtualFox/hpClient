@@ -1,0 +1,5 @@
+{
+  "appId": "com.hpclient.app",
+  "appName": "hpclient",
+  "webDir": "dist"
+}
